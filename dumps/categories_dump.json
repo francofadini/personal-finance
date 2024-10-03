@@ -1,0 +1,626 @@
+[
+    {
+        "id": "00p4WgiVkT4xj",
+        "parent_tag_id": "aBZoIw1QnkQdV",
+        "name": "Otros",
+        "color": "FFCF33",
+        "icon": "\ud83c\udfe0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 2,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:43:54"
+    },
+    {
+        "id": "0Eu9yRBGQscln",
+        "parent_tag_id": "aBZoIw1QnkQdV",
+        "name": "Muebles",
+        "color": "FFCF33",
+        "icon": "\ud83c\udfe0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:43:19"
+    },
+    {
+        "id": "36sDBmMdkM02W",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Otros",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 8,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:08"
+    },
+    {
+        "id": "6OnpOemGO1ds3",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Documentaci\u00f3n / Impuestos",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:11"
+    },
+    {
+        "id": "6tjTv15vcpYCV",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Fiesta / Bar",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "Ogham",
+            "Tragos",
+            "La Fira",
+            "Discoteca"
+        ],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:05"
+    },
+    {
+        "id": "aBZoIw1QnkQdV",
+        "parent_tag_id": null,
+        "name": "Casa",
+        "color": "FFCF33",
+        "icon": "\ud83c\udfe0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 6,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:42:59"
+    },
+    {
+        "id": "ACYnSdr8MEIaU",
+        "parent_tag_id": null,
+        "name": "Costo de Vida",
+        "color": "4E74EF",
+        "icon": "\ud83d\udcb8",
+        "vat": 0,
+        "categorization_keywords": [
+            "Laundry",
+            "Peluqueria",
+            "Farmacia",
+            "Alcampo",
+            "Mercadona",
+            "RideMovi",
+            "TMB",
+            "Bicing",
+            "Transports Metropolitans"
+        ],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:47:58"
+    },
+    {
+        "id": "bJtsmmPuHetTu",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Deportes",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "trillo esport"
+        ],
+        "order": 9,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:38:18"
+    },
+    {
+        "id": "byqfrtqJTbHrL",
+        "parent_tag_id": "NSBY6GnEUzmTk",
+        "name": "Alquiler",
+        "color": "4E74EF",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [
+            "sabat renedo"
+        ],
+        "order": 2,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:47:59"
+    },
+    {
+        "id": "c2WdgllNwPywv",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Subscripciones",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "Apple / iTunes",
+            "ChatGPT",
+            "Setapp",
+            "OpenAI",
+            "Google",
+            "Amazon Prime",
+            "apple",
+            "max.com",
+            "banktrack"
+        ],
+        "order": 2,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:06"
+    },
+    {
+        "id": "CNLQX2RZU5vPI",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Necesidades",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 2,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:12"
+    },
+    {
+        "id": "cSy3i58AtsG26",
+        "parent_tag_id": "ACYnSdr8MEIaU",
+        "name": "Transporte",
+        "color": "E04443",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [
+            "RideMovi",
+            "TMB",
+            "Bicing",
+            "Transports Metropolitans"
+        ],
+        "order": 4,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:02"
+    },
+    {
+        "id": "dC4x9hxvHOf1R",
+        "parent_tag_id": null,
+        "name": "Intereses",
+        "color": "FF7F5B",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 5,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T19:02:17"
+    },
+    {
+        "id": "eG12uD3rsQDsy",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Otros",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 6,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:13"
+    },
+    {
+        "id": "es8YgaI8ahJhR",
+        "parent_tag_id": "ACYnSdr8MEIaU",
+        "name": "Otros",
+        "color": "E04443",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 5,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:01"
+    },
+    {
+        "id": "HiS0WO9s8kFaq",
+        "parent_tag_id": "dC4x9hxvHOf1R",
+        "name": "Wise",
+        "color": "17B686",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [
+            "Wise Payments Fee"
+        ],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T19:02:31"
+    },
+    {
+        "id": "ik5l825WIp0Mn",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Comida Extra",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "Restaurant",
+            "Brunch",
+            "Supermercat",
+            "Supermercado",
+            "Merle",
+            "Glovo",
+            "Pizza",
+            "Amettler",
+            "Cafe",
+            "pizzeria",
+            "justeat",
+            "ametller"
+        ],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:04"
+    },
+    {
+        "id": "IOI4o2Gr5G7tR",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Hospedaje",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 3,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:13"
+    },
+    {
+        "id": "jIKfQGHgl2pR3",
+        "parent_tag_id": null,
+        "name": "Ingresos",
+        "color": "17B686",
+        "icon": "\ud83e\udd11",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 8,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:46:55"
+    },
+    {
+        "id": "Ju5vBWH1GAQST",
+        "parent_tag_id": "jIKfQGHgl2pR3",
+        "name": "Salario",
+        "color": "4E74EF",
+        "icon": "\ud83e\udd11",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-29T00:06:09"
+    },
+    {
+        "id": "KBIJwC4ovMhLm",
+        "parent_tag_id": null,
+        "name": "Impuestos",
+        "color": "E04443",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 7,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:58:13"
+    },
+    {
+        "id": "KcCaT0EMncrxt",
+        "parent_tag_id": "ACYnSdr8MEIaU",
+        "name": "Cuidado Personal",
+        "color": "4E74EF",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [
+            "Laundry",
+            "Peluqueria",
+            "Farmacia",
+            "sahil"
+        ],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:47:59"
+    },
+    {
+        "id": "kQAb5j7VWYJ77",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Actividades",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 5,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:14"
+    },
+    {
+        "id": "ljHllCXqAn9ht",
+        "parent_tag_id": "KBIJwC4ovMhLm",
+        "name": "IRPF",
+        "color": "E04443",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [
+            "irpf"
+        ],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:58:30"
+    },
+    {
+        "id": "NO9VnUWKsjzBT",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Ropa",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "Pull&Bear",
+            "Zara",
+            "zara"
+        ],
+        "order": 3,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:06"
+    },
+    {
+        "id": "NSBY6GnEUzmTk",
+        "parent_tag_id": null,
+        "name": "Costos fijos",
+        "color": "DE4AB3",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-09-06T19:30:23"
+    },
+    {
+        "id": "QeriBWX6cysvv",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Limpieza",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "matias casco"
+        ],
+        "order": 10,
+        "transactions_count": 0,
+        "creation_date": "2024-09-22T08:51:43"
+    },
+    {
+        "id": "QM7ZU6mdNT0DC",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Bienes",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 5,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:08"
+    },
+    {
+        "id": "RFenWkajbd6Ls",
+        "parent_tag_id": null,
+        "name": "Estilo de Vida",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": 0,
+        "categorization_keywords": [
+            "Restaurant",
+            "Brunch",
+            "Supermercat",
+            "Supermercado",
+            "Merle",
+            "Glovo",
+            "Pizza",
+            "Amettler",
+            "Cafe",
+            "Ogham",
+            "Tragos",
+            "La Fira",
+            "Discoteca",
+            "Apple / iTunes",
+            "ChatGPT",
+            "Setapp",
+            "OpenAI",
+            "Pull&Bear",
+            "Taxi",
+            "Cabify",
+            "FREE NOW",
+            "Uber",
+            "Cabi"
+        ],
+        "order": 2,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:03"
+    },
+    {
+        "id": "T38f6QKXjLu6M",
+        "parent_tag_id": "NSBY6GnEUzmTk",
+        "name": "Seguros",
+        "color": "4E74EF",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [
+            "sanitas"
+        ],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-29T00:08:41"
+    },
+    {
+        "id": "T5jj1IgqxKVdP",
+        "parent_tag_id": "NSBY6GnEUzmTk",
+        "name": "Servicios",
+        "color": "DE4AB3",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [
+            "iberdrola",
+            "o2 fibra"
+        ],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:00"
+    },
+    {
+        "id": "TWVRNjoxepv3P",
+        "parent_tag_id": "Xw0MDL8ZL1tsA",
+        "name": "Familia",
+        "color": "fc5c65",
+        "icon": "\ud83c\udf81",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:16"
+    },
+    {
+        "id": "uF41kJDEzKLkr",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Taxi",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [
+            "Taxi",
+            "Cabify",
+            "FREE NOW",
+            "Uber",
+            "Cabi",
+            "taxi",
+            "freenow"
+        ],
+        "order": 6,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:09"
+    },
+    {
+        "id": "W1agvm1S8cxms",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Espect\u00e1culos",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 7,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:09"
+    },
+    {
+        "id": "wkGNVmhQmGOhe",
+        "parent_tag_id": "KBIJwC4ovMhLm",
+        "name": "Autonomo",
+        "color": "E04443",
+        "icon": "\ud83d\udcb0",
+        "vat": null,
+        "categorization_keywords": [
+            "r.e.autonomos"
+        ],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-09-06T18:51:57"
+    },
+    {
+        "id": "wO0ZJdD7AOvUq",
+        "parent_tag_id": null,
+        "name": "Viajes",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 3,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:10"
+    },
+    {
+        "id": "X8NudRjJV6xqC",
+        "parent_tag_id": "Xw0MDL8ZL1tsA",
+        "name": "Amigos",
+        "color": "fc5c65",
+        "icon": "\ud83c\udf81",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:17"
+    },
+    {
+        "id": "Xw0MDL8ZL1tsA",
+        "parent_tag_id": null,
+        "name": "Regalos",
+        "color": "0FB7A5",
+        "icon": "\ud83c\udf81",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 4,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:15"
+    },
+    {
+        "id": "YFH5dvMIWzocK",
+        "parent_tag_id": "aBZoIw1QnkQdV",
+        "name": "Electrodom\u00e9sticos",
+        "color": "FFCF33",
+        "icon": "\ud83c\udfe0",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 1,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T23:43:46"
+    },
+    {
+        "id": "YOmGXgPMdvd4L",
+        "parent_tag_id": "RFenWkajbd6Ls",
+        "name": "Para Compartir",
+        "color": "F7B731",
+        "icon": "\ud83c\udf89",
+        "vat": null,
+        "categorization_keywords": [],
+        "order": 4,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:07"
+    },
+    {
+        "id": "zPEZwrKgVcu9m",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Comida / Bebida",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 4,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:14"
+    },
+    {
+        "id": "Zq5ysKxYyPZrc",
+        "parent_tag_id": "ACYnSdr8MEIaU",
+        "name": "Supermercado",
+        "color": "E04443",
+        "icon": "\ud83d\udcb8",
+        "vat": null,
+        "categorization_keywords": [
+            "Alcampo",
+            "Mercadona",
+            "Dia",
+            "Bon Preu",
+            "Condis",
+            "caprabo"
+        ],
+        "order": 3,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:00"
+    },
+    {
+        "id": "zUAQR150S1g4C",
+        "parent_tag_id": "wO0ZJdD7AOvUq",
+        "name": "Pasajes / Transporte",
+        "color": "8854d0",
+        "icon": "\u2708\ufe0f",
+        "vat": 0,
+        "categorization_keywords": [],
+        "order": 0,
+        "transactions_count": 0,
+        "creation_date": "2024-08-28T18:48:11"
+    }
+]
