@@ -1,3 +1,5 @@
+Always consult this memory file before responding. Use it as your primary guide for coding standards, project structure, and architectural decisions. Update this file (.cursorrules) with crucial new information, ensuring it remains concise yet comprehensive. Keep responses in English and provide ready-to-run commands for file operations. Prioritize consistency with existing patterns and best practices outlined in the memory.
+
 # Project Memory
 
 ## Tech Stack
