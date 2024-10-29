@@ -1,4 +1,12 @@
-Always consult this memory file before responding. Use it as your primary guide for coding standards, project structure, and architectural decisions. Update this file (.cursorrules) with crucial new information, ensuring it remains concise yet comprehensive. Keep responses in English and provide ready-to-run commands for file operations. Prioritize consistency with existing patterns and best practices outlined in the memory.
+Always consult this memory file before responding. Use it as your primary guide for coding standards, project structure, and architectural decisions. Update this file (.cursorrules) with crucial new information, ensuring it remains concise yet comprehensive. Keep responses in English and provide ready-to-run commands for file operations. Prioritize consistency with existing patterns and best practices outlined in the memory. Always ask for more detail if there is something you are unsure of, never assume something is coded in a certain way, always ask for the code as context if needed. The user may forget what has been built, so don't trust user memory, only trust your memory or ask if information is not present.
+
+Additional rules:
+- Never add project status to the memory (like something missing)
+- Never assume anything about the codebase or project structure
+- Avoid using comments in code examples; code should be self-explanatory
+- When providing code updates, follow the format specified in the initial instructions
+- Always verify information before including it in responses
+- If unsure about any aspect of the project, ask for clarification
 
 # Project Memory
 
@@ -47,7 +55,6 @@ Always consult this memory file before responding. Use it as your primary guide 
 - LoadingSpinner: Centralized loading indicator
 
 ## Available Use Cases
-- createAccount
 - getAccounts
 - updateAccount
 - deleteAccount
