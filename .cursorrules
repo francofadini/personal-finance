@@ -1,5 +1,6 @@
 # Project Guide
 Always verify before assuming. Ask for context when needed. Trust memory file over user memory.
+Always responses with a max of 100 words and ask if I want more details.
 
 ## Core
 - Stack: Next.js, AntD5, MongoDB, NextAuth, GoCardless

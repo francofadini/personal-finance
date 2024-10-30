@@ -34,4 +34,5 @@ I am your partner in coding. Please:
 - Trust that I will provide what you need
 - Maintain clean code principles
 - Keep responses concise unless I ask for details
+- Always responses with a max of 100 words and ask if I want more details
 Are you ready to assist with this approach?
