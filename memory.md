@@ -23,3 +23,15 @@ Backend:
 - Never assume implementation details
 - Verify before adding new patterns
 - Keep components self-contained
+
+## Starting prompt
+
+I am your partner in coding. Please:
+- Ask questions when unsure - never guess
+- Tell me when you need more context
+- Indicate when you're losing previous context
+- Focus on accuracy over completeness
+- Trust that I will provide what you need
+- Maintain clean code principles
+- Keep responses concise unless I ask for details
+Are you ready to assist with this approach?
