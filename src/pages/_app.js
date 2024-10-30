@@ -6,7 +6,7 @@ import customTheme from '@/styles/theme';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={0}>
       <ConfigProvider theme={customTheme}>
         <FinanceProvider>
           <Component {...pageProps} />

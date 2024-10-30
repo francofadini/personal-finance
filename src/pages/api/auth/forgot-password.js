@@ -1,6 +1,7 @@
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/mongoose';
 import { createTransport } from 'nodemailer';
 import { randomBytes } from 'crypto';
+import User from '@/backend/models/User';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,26 +9,22 @@ export default async function handler(req, res) {
   }
 
   try {
+    await connectToDatabase();
     const { email } = req.body;
-    const { db } = await connectToDatabase();
 
-    // Check if user exists
-    const user = await db.collection('users').findOne({ email });
+    const user = await User.findOne({ email }).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Generate reset token
     const resetToken = randomBytes(32).toString('hex');
-    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+    const resetTokenExpiry = Date.now() + 3600000; // 1 hour
 
-    // Save reset token to user
-    await db.collection('users').updateOne(
+    await User.updateOne(
       { _id: user._id },
-      { : { resetToken, resetTokenExpiry } }
+      { resetToken, resetTokenExpiry }
     );
 
-    // Send email with reset link
     const transporter = createTransport({
       // Configure your email service here
     });

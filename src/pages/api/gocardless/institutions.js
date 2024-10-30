@@ -1,4 +1,4 @@
-import { getInstitutions } from '@/backend/services/gocardlessService';
+import { fetchInstitutions } from '@/backend/services/gocardlessService';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const institutions = await getInstitutions(country);
+    const institutions = await fetchInstitutions(country);
     res.status(200).json(institutions);
   } catch (error) {
     console.error('Error in GoCardless institutions endpoint:', error);

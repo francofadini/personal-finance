@@ -3,7 +3,7 @@ Always verify before assuming. Ask for context when needed. Trust memory file ov
 Always responses with a max of 100 words and ask if I want more details.
 
 ## Core
-- Stack: Next.js, AntD5, MongoDB, NextAuth, GoCardless
+- Stack: Next.js, AntD5, Mongoose, NextAuth, GoCardless
 - Structure: src/(pages|components|backend|services)
 - Pattern: RESTful, mobile-first, component-based
 
@@ -13,7 +13,7 @@ Frontend:
 - Key: BottomNav, AccountList, CategoryList, AddButton, LoadingSpinner
 
 Backend:
-- MongoDB + NextAuth
+- Mongoose + NextAuth
 - Use cases: get/update/deleteAccount
 - GC Service: src/backend/services/gocardlessService.js (token, accounts, requisitions)
 
@@ -24,4 +24,4 @@ Backend:
 - Callback: uses 'ref' param for finalization
 
 ## Env
-GOCARDLESS_SECRET_(ID|KEY), NEXT_PUBLIC_BASE_URL
+GOCARDLESS_SECRET_(ID|KEY), NEXT_PUBLIC_BASE_URL, MONGODB_URI

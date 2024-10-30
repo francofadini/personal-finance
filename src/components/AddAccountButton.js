@@ -24,7 +24,7 @@ const InstitutionOption = styled.div`
   align-items: center;
 `;
 
-const AddAccountButton = () => {
+const AddAccountButton = ({ onAccountAdded }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(DEFAULT_COUNTRY);
   const [institutions, setInstitutions] = useState([]);
@@ -78,20 +78,8 @@ const AddAccountButton = () => {
 
   const handleInstitutionSelect = async (institutionId) => {
     try {
-      const response = await fetch('/api/gocardless/requisitions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ institutionId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create requisition');
-      }
-
-      const data = await response.json();
-      window.location.href = data.link; // Redirect to the bank's authentication page
+      const result = await onAccountAdded(institutionId);
+      window.location.href = result.link;
     } catch (error) {
       console.error('Error creating requisition:', error);
       message.error('Failed to connect to the selected institution. Please try again.');
