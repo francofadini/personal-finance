@@ -121,22 +121,6 @@ export const finalizeRequisition = async (ref) => {
   }
 };
 
-export const fetchAccountDetails = async (accountId) => {
-  try {
-    console.log('🔄 Fetching account details:', accountId);
-    const response = await fetch(`${API_URL}/accounts/${accountId}/details/`, {
-      headers: await getHeaders(),
-    });
-    if (!response.ok) throw new Error(`Failed to fetch account details: ${response.status}`);
-    const data = await response.json();
-    console.log('✅ Account details fetched:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Failed to fetch account details:', error);
-    throw new Error('Could not retrieve account details');
-  }
-};
-
 export const fetchAccountAndDetails = async (accountId) => {
   try {
     console.log('🔄 Fetching account data for:', accountId);
@@ -146,7 +130,18 @@ export const fetchAccountAndDetails = async (accountId) => {
       headers: await getHeaders() 
     });
     const account = await accountResponse.json();
+    if (accountResponse.status !== 200) console.warn(`Failed to fetch account: ${accountResponse.status}`);
     
+    // Add delay to avoid rate limits
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Fetch details
+    const detailsResponse = await fetch(`${API_URL}/accounts/${accountId}/details`, { 
+      headers: await getHeaders() 
+    });
+    const details = await detailsResponse.json();
+    if (detailsResponse.status !== 200) console.warn(`Failed to fetch details: ${detailsResponse.status}`);
+
     // Add delay to avoid rate limits
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -155,10 +150,9 @@ export const fetchAccountAndDetails = async (accountId) => {
       headers: await getHeaders() 
     });
     const balances = await balancesResponse.json();
+    if (balancesResponse.status !== 200) console.warn(`Failed to fetch balances: ${balancesResponse.status}`);
 
-    console.log('✅ Account data fetched:', JSON.stringify({ account, balances }));
-
-    return { account, balances };
+    return { account, details, balances };
   } catch (error) {
     console.error('❌ Failed to fetch account data:', error);
     throw new Error('Could not retrieve account information');

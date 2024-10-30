@@ -22,7 +22,20 @@ const AccountsPage = () => {
   const handleCallback = async (ref, institutionId) => {
     try {
       setLinkStatus('processing');
-      await finalizeAccount(ref, institutionId);
+      const { savedAccounts, availableAccounts } = await finalizeAccount(ref, institutionId);
+      if (availableAccounts.length === 0) {
+        message.warning('No accounts were found');
+        setLinkStatus(null);
+        return;
+      }
+      if (savedAccounts.length !== availableAccounts.length) {
+        if (savedAccounts.length === 0) {
+          message.warning(`None of the ${availableAccounts.length} accounts could be linked`);
+          setLinkStatus(null);
+          return;
+        }
+        message.warning(`${availableAccounts.length - savedAccounts.length} out of ${availableAccounts.length} accounts were not linked`);
+      }
       setLinkStatus('success');
       await loadAccounts();
       router.replace('/', undefined, { shallow: true });

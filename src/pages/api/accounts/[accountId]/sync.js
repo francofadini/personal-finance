@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Account not found' });
     }
 
-    const updatedAccounts = await fetchGocardlessAccounts(account.requisitionId);
+    const updatedAccounts = await fetchGocardlessAccounts(account.metadata.requisitionId);
     console.log('✅ Fetched updated accounts:', updatedAccounts);
 
     account.accounts = updatedAccounts;

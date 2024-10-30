@@ -40,7 +40,7 @@ export const deleteAccount = async (accountId) => {
   const response = await fetch(`${API_URL}/${accountId}`, {
     method: 'DELETE',
   });
-  if (!response.ok) {
+  if (response.status !== 204) {
     throw new Error('Failed to delete account');
   }
   return response.json();

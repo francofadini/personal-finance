@@ -18,26 +18,20 @@ export const createAccountOrchestrator = {
     const savedAccounts = [];
     for (const accountId of requisition.accounts) {
       try {
-        const { account, balances } = await fetchAccountAndDetails(accountId);
-        
-        // Check if we hit rate limits
-        if (balances.status_code === 429) {
-          console.warn('⚠️ Rate limit hit, using default values');
-        }
+        const { account, details, balances } = await fetchAccountAndDetails(accountId);
 
         const accountData = {
           userId,
-          name: account.owner_name || `Account ${account.iban}`,
-          balance: 0, // Default when rate limited
-          currency: 'EUR', // Default when rate limited
+          name: details.account?.details || account.iban,
+          balance: balances.balances?.[0]?.balanceAmount?.amount,
+          currency: balances.balances?.[0]?.balanceAmount?.currency,
           identifier: account.iban,
-          status: account.status.toLowerCase(),
           metadata: { 
             provider: 'gocardless', 
             accountId,
             institutionId: account.institution_id,
             requisitionId: requisition.id,
-            needsSync: true, // Flag to sync later
+            needsSync: true,
             lastSync: new Date()
           }
         };
@@ -52,6 +46,6 @@ export const createAccountOrchestrator = {
     }
     
     console.log(`✨ Created ${savedAccounts.length} accounts successfully`);
-    return savedAccounts;
+    return { savedAccounts, availableAccounts: requisition.accounts };
   }
 }; 

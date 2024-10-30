@@ -9,7 +9,21 @@ export const createAccountUseCase = async (accountData) => {
       identifier: accountData.identifier 
     });
 
-    const account = new Account(accountData);
+    //validate accountData
+    if (!accountData.userId || !accountData.name || !accountData.identifier || !accountData.currency) {
+      throw new Error('Missing required fields');
+    }
+
+    const account = new Account({
+      userId: accountData.userId,
+      name: accountData.name,
+      balance: accountData.balance || 0,
+      currency: accountData.currency,
+      identifier: accountData.identifier,
+      visible: true,
+      metadata: accountData.metadata
+    });
+
     const savedAccount = await account.save();
     
     console.log('✅ Account saved successfully:', savedAccount._id);

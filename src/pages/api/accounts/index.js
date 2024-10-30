@@ -26,12 +26,12 @@ export default async function handler(req, res) {
       
       // Step 2: Finalize account creation
       if (ref && institutionId) {
-        const account = await createAccountOrchestrator.finalize(
+        const { savedAccounts, availableAccounts } = await createAccountOrchestrator.finalize(
           session.user.id,
           institutionId,
           ref
         );
-        return res.status(200).json(account);
+        return res.status(200).json({ savedAccounts, availableAccounts });
       }
 
       return res.status(400).json({ error: 'Invalid request parameters' });

@@ -19,14 +19,16 @@ const AccountList = ({ accounts, onDeleteAccount, onSyncAccount }) => {
         <List.Item
           actions={[
             <Button
+              key="sync"
               icon={<SyncOutlined />}
-              onClick={() => onSyncAccount(account.id)}
+              onClick={() => onSyncAccount(account._id)}
             >
               Sincronizar
             </Button>,
             <Button
+              key="delete"
               icon={<DeleteOutlined />}
-              onClick={() => onDeleteAccount(account.id)}
+              onClick={() => onDeleteAccount(account._id)}
               danger
             >
               Eliminar
@@ -38,16 +40,19 @@ const AccountList = ({ accounts, onDeleteAccount, onSyncAccount }) => {
             description={`Última sincronización: ${new Date(account.lastSyncDate).toLocaleString()}`}
           />
           <Collapse>
-            <Panel header="Cuentas vinculadas" key="1">
-              {account.gocardlessAccounts.map((gocardlessAccount) => (
-                <div key={gocardlessAccount.id}>
-                  <Text strong>{gocardlessAccount.name}</Text>
+            <Panel header="Detalles de la cuenta" key="1">
+              <Text>{`Saldo: ${account.balance} ${account.currency}`}</Text>
+              <br />
+              <Text>{`Identificador: ${account.identifier}`}</Text>
+              <br />
+              <Text>{`Estado: ${account.status}`}</Text>
+              {account.metadata && (
+                <>
                   <br />
-                  <Text>{`Saldo: ${gocardlessAccount.balance} ${gocardlessAccount.currency}`}</Text>
-                  <br />
-                  <Text>{`Tipo: ${gocardlessAccount.accountType}`}</Text>
-                </div>
-              ))}
+                  <Text strong>Metadata:</Text>
+                  <pre>{JSON.stringify(account.metadata, null, 2)}</pre>
+                </>
+              )}
             </Panel>
           </Collapse>
         </List.Item>

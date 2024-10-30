@@ -1,6 +1,6 @@
-import { connectToDatabase } from '@/lib/mongoose';
+import { connectToDatabase, getObjectId } from '@/lib/mongoose';
 import Account from '@/backend/models/Account';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../../auth/[...nextauth]';
 import { getServerSession } from 'next-auth';
 
 export default async function handler(req, res) {
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     });
 
     if (!account) {
+      console.log('❌ Account not found:', { accountId, userId: session.user.id });
       return res.status(404).json({ error: 'Account not found' });
     }
 
