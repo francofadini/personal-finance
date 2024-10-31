@@ -1,3 +1,6 @@
+import { connectToDatabase } from "@/lib/mongoose";
+import Account from '@/backend/models/Account';
+
 const API_URL = 'https://bankaccountdata.gocardless.com/api/v2';
 const SECRET_ID = process.env.GOCARDLESS_SECRET_ID;
 const SECRET_KEY = process.env.GOCARDLESS_SECRET_KEY;
@@ -43,6 +46,15 @@ const getHeaders = async () => {
 
 export const fetchInstitutions = async (countryCode) => {
   try {
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        { 
+          id: 'SANDBOXFINANCE_SFIN0000', 
+          name: 'Sandbox Finance', 
+          logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg' 
+        }
+      ]
+    }
     console.log('🔄 Fetching institutions for:', countryCode);
     const response = await fetch(`${API_URL}/institutions/?country=${countryCode}`, { 
       headers: await getHeaders() 
@@ -80,22 +92,6 @@ export const createRequisition = async (institutionId, redirectUrl) => {
   }
 };
 
-export const fetchGocardlessAccounts = async (requisitionId) => {
-  try {
-    console.log('🔄 Fetching accounts for requisition:', requisitionId);
-    const response = await fetch(`${API_URL}/requisitions/${requisitionId}/`, {
-      headers: await getHeaders(),
-    });
-    if (!response.ok) throw new Error(`Failed to fetch accounts: ${response.status}`);
-    const data = await response.json();
-    console.log('✅ Accounts fetched successfully');
-    return data;
-  } catch (error) {
-    console.error('❌ Failed to fetch accounts:', error);
-    throw new Error('Could not retrieve bank accounts');
-  }
-};
-
 export const finalizeRequisition = async (ref) => {
   try {
     console.log('🔄 Finalizing requisition with ref:', ref);
@@ -121,12 +117,47 @@ export const finalizeRequisition = async (ref) => {
   }
 };
 
-export const fetchAccountAndDetails = async (accountId) => {
+export const fetchAccountBalance = async (accountId) => {
+  await connectToDatabase();
+  const account = await Account.findById(accountId);
+  if (!account || !account.metadata.accountId) {
+    throw new Error(`No account found for ${accountId}`);
+  }
+  const gocardlessAccountId = account.metadata.accountId;
+  if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
+    throw new Error(`Skipping fetch for account ${gocardlessAccountId}, last synced at ${account.lastSync}`);
+  }
+
   try {
-    console.log('🔄 Fetching account data for:', accountId);
+    console.log('🔄 Fetching balance for account:', gocardlessAccountId);
+    const balanceResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/balances`, { 
+      headers: await getHeaders() 
+    });
+    if (!balanceResponse.ok) throw new Error(`Failed to fetch balance: ${balanceResponse.status}`);
+    const balances = await balanceResponse.json();
+    console.log('✅ Balance fetched successfully');
+    return balances;
+  } catch (error) {
+    console.error('❌ Failed to fetch balance:', error);
+    throw new Error(`Failed to fetch balance for account ${accountId}`);
+  }
+};
+
+export const fetchAccountAndDetails = async (accountId) => {
+  await connectToDatabase();
+  const account = await Account.findById(accountId);
+  if (!account || !account.metadata.accountId) {
+    throw new Error(`No account found for ${accountId}`);
+  }
+  const gocardlessAccountId = account.metadata.accountId;
+  if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
+    throw new Error(`Skipping fetch for account ${gocardlessAccountId}, last synced at ${account.lastSync}`);
+  }
+  try {
+    console.log('🔄 Fetching account data for:', gocardlessAccountId);
     
     // Fetch account first
-    const accountResponse = await fetch(`${API_URL}/accounts/${accountId}`, { 
+    const accountResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}`, { 
       headers: await getHeaders() 
     });
     const account = await accountResponse.json();
@@ -136,7 +167,7 @@ export const fetchAccountAndDetails = async (accountId) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Fetch details
-    const detailsResponse = await fetch(`${API_URL}/accounts/${accountId}/details`, { 
+    const detailsResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/details`, { 
       headers: await getHeaders() 
     });
     const details = await detailsResponse.json();
@@ -146,7 +177,7 @@ export const fetchAccountAndDetails = async (accountId) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Fetch balances
-    const balancesResponse = await fetch(`${API_URL}/accounts/${accountId}/balances`, { 
+    const balancesResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/balances`, { 
       headers: await getHeaders() 
     });
     const balances = await balancesResponse.json();

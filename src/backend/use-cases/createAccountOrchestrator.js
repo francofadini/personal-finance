@@ -18,27 +18,33 @@ export const createAccountOrchestrator = {
     const savedAccounts = [];
     for (const accountId of requisition.accounts) {
       try {
-        const { account, details, balances } = await fetchAccountAndDetails(accountId);
-
+        // Create a basic account record in the database
         const accountData = {
           userId,
-          name: details.account?.details || account.iban,
-          balance: balances.balances?.[0]?.balanceAmount?.amount,
-          currency: balances.balances?.[0]?.balanceAmount?.currency,
-          identifier: account.iban,
-          metadata: { 
-            provider: 'gocardless', 
+          name: accountId,
+          identifier: accountId,
+          metadata: {
+            provider: 'gocardless',
             accountId,
-            institutionId: account.institution_id,
-            requisitionId: requisition.id,
-            needsSync: true,
-            lastSync: new Date()
+            institutionId,
+            requisitionId: requisition.id
           }
         };
-
         const savedAccount = await createAccountUseCase(accountData);
+
+        // Fetch account details and update the saved account
+        const { account, details, balances } = await fetchAccountAndDetails(savedAccount._id);
+        if (!account || !details || !balances || !account.iban) {
+          throw new Error(`Failed to fetch account details for ${accountId}`);
+        }
+        savedAccount.name = details.account?.details || account?.iban;
+        savedAccount.balance = balances.balances?.[0]?.balanceAmount?.amount;
+        savedAccount.currency = balances.balances?.[0]?.balanceAmount?.currency;
+        savedAccount.identifier = account.iban;
+        savedAccount.lastSync = new Date();
+        await savedAccount.save();
+
         savedAccounts.push(savedAccount);
-        
       } catch (error) {
         console.error('❌ Failed to create account:', accountId, error);
         // Continue with next account

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import Account from '@/backend/models/Account';
-import { fetchGocardlessAccounts } from '@/backend/services/gocardlessService';
+import { fetchAccountBalance } from '@/backend/services/gocardlessService';
 import { get } from 'mongoose';
 
 export default async function handler(req, res) {
@@ -28,13 +28,15 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Account not found' });
     }
 
-    const updatedAccounts = await fetchGocardlessAccounts(account.metadata.requisitionId);
-    console.log('✅ Fetched updated accounts:', updatedAccounts);
+    const balances = await fetchAccountBalance(req.query.accountId);
 
-    account.accounts = updatedAccounts;
-    account.lastSyncDate = new Date();
-    await account.save();
-    
+    if (balances) {
+      account.balance = balances.balances?.[0]?.balanceAmount?.amount;
+      account.currency = balances.balances?.[0]?.balanceAmount?.currency;
+      account.lastSync = new Date();
+      await account.save();
+    }
+
     console.log('✅ Account sync completed');
     res.status(200).json(account);
   } catch (error) {

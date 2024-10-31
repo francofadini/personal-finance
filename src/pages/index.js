@@ -69,6 +69,7 @@ const AccountsPage = () => {
       message.success('Account deleted successfully');
       loadAccounts();
     } catch (error) {
+      console.error('Error deleting account', error);
       message.error('Error deleting account');
     }
   };

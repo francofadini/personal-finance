@@ -4,13 +4,10 @@ import Account from '@/backend/models/Account';
 export const createAccountUseCase = async (accountData) => {
   try {
     await connectToDatabase();
-    console.log('🔄 Creating account:', { 
-      name: accountData.name, 
-      identifier: accountData.identifier 
-    });
+    console.log('🔄 Creating account:', accountData);
 
     //validate accountData
-    if (!accountData.userId || !accountData.name || !accountData.identifier || !accountData.currency) {
+    if (!accountData.userId || !accountData.name || !accountData.identifier) {
       throw new Error('Missing required fields');
     }
 
@@ -18,9 +15,8 @@ export const createAccountUseCase = async (accountData) => {
       userId: accountData.userId,
       name: accountData.name,
       balance: accountData.balance || 0,
-      currency: accountData.currency,
+      currency: accountData.currency || 'EUR',
       identifier: accountData.identifier,
-      visible: true,
       metadata: accountData.metadata
     });
 

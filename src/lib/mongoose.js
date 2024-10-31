@@ -25,8 +25,4 @@ export async function connectToDatabase() {
   }
   cached.conn = await cached.promise;
   return cached.conn;
-} 
-
-export function getObjectId(id) {
-  return new mongoose.Types.ObjectId(id);
 }

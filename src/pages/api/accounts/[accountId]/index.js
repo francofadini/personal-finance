@@ -1,4 +1,4 @@
-import { connectToDatabase, getObjectId } from '@/lib/mongoose';
+import { connectToDatabase } from '@/lib/mongoose';
 import Account from '@/backend/models/Account';
 import { authOptions } from '../../auth/[...nextauth]';
 import { getServerSession } from 'next-auth';
