@@ -72,7 +72,7 @@ export const createRequisition = async (institutionId, redirectUrl) => {
     });
     if (!response.ok) throw new Error(`Failed to create requisition: ${response.status}`);
     const data = await response.json();
-    console.log('✅ Requisition created:', data);
+    console.log('✅ Requisition created');
     return data;
   } catch (error) {
     console.error('❌ Failed to create requisition:', error);
@@ -108,7 +108,7 @@ export const finalizeRequisition = async (ref) => {
     if (!requisitions.results.length) throw new Error('No requisition found with this reference');
 
     const requisition = requisitions.results[0];
-    console.log('✅ Requisition found:', requisition);
+    console.log('✅ Requisition found');
 
     if (requisition.status !== 'LN') {
       throw new Error(`Invalid requisition status: ${requisition.status}`);
