@@ -1,0 +1,15 @@
+{
+    "accounts": {
+      "title": "Accounts",
+      "deleteConfirm": {
+        "title": "Delete Account",
+        "content": "Are you sure you want to delete this account?"
+      },
+      "deleteSuccess": "Account deleted successfully",
+      "deleteError": "Error deleting account"
+    },
+    "common": {
+      "delete": "Delete",
+      "cancel": "Cancel"
+    }
+  }

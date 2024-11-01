@@ -7,6 +7,8 @@ const AccountSchema = new mongoose.Schema({
   balance: { type: Number, required: true },
   currency: { type: String, required: true },
   identifier: { type: String, required: true },
+  institutionName: { type: String, required: true },
+  institutionLogo: { type: String, required: true },
   visible: { type: Boolean, default: true },
   lastDetailsSync: { type: Date },
   lastTransactionsSync: { type: Date },

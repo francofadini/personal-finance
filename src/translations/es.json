@@ -1,0 +1,15 @@
+{
+    "accounts": {
+      "title": "Cuentas",
+      "deleteConfirm": {
+        "title": "Eliminar Cuenta",
+        "content": "¿Estás seguro de que quieres eliminar esta cuenta?"
+      },
+      "deleteSuccess": "Cuenta eliminada con éxito",
+      "deleteError": "Error al eliminar la cuenta"
+    },
+    "common": {
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  }

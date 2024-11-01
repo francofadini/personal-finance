@@ -1,62 +1,42 @@
 import React from 'react';
 import styled from 'styled-components';
-import { List, Button, Typography, Collapse } from 'antd';
-import { DeleteOutlined, SyncOutlined } from '@ant-design/icons';
+import { List, Typography, Skeleton } from 'antd';
+import AccountListItem from './AccountListItem';
 
 const { Text } = Typography;
-const { Panel } = Collapse;
 
 const StyledList = styled(List)`
-  margin-bottom: 20px;
+  margin-top: 16px;
 `;
 
-const AccountList = ({ accounts, onDeleteAccount, onSyncAccount }) => {
+const EmptyText = styled(Text)`
+  display: block;
+  text-align: center;
+  margin-top: 48px;
+  font-size: 16px;
+  color: #888;
+`;
+
+const AccountList = ({ accounts, loading, onDeleteAccount, onSyncAccount }) => {
   return (
     <StyledList
-      itemLayout="vertical"
       dataSource={accounts}
       renderItem={(account) => (
-        <List.Item
-          actions={[
-            <Button
-              key="sync"
-              icon={<SyncOutlined />}
-              onClick={() => onSyncAccount(account._id)}
-            >
-              Sincronizar
-            </Button>,
-            <Button
-              key="delete"
-              icon={<DeleteOutlined />}
-              onClick={() => onDeleteAccount(account._id)}
-              danger
-            >
-              Eliminar
-            </Button>
-          ]}
-        >
-          <List.Item.Meta
-            title={account.name}
-            description={`Última sincronización: ${new Date(account.lastTransactionsSync).toLocaleString()}`}
-          />
-          <Collapse>
-            <Panel header="Detalles de la cuenta" key="1">
-              <Text>{`Saldo: ${account.balance} ${account.currency}`}</Text>
-              <br />
-              <Text>{`Identificador: ${account.identifier}`}</Text>
-              <br />
-              <Text>{`Estado: ${account.status}`}</Text>
-              {account.metadata && (
-                <>
-                  <br />
-                  <Text strong>Metadata:</Text>
-                  <pre>{JSON.stringify(account.metadata, null, 2)}</pre>
-                </>
-              )}
-            </Panel>
-          </Collapse>
-        </List.Item>
+        <AccountListItem
+          key={account._id}
+          account={account}
+          loading={loading}
+          onDelete={() => onDeleteAccount(account._id)}
+          onSync={() => onSyncAccount(account._id)}
+        />
       )}
+      locale={{
+        emptyText: loading ? (
+          <Skeleton paragraph={{ rows: 2 }} active />
+        ) : (
+          <EmptyText>No accounts found</EmptyText>
+        ),
+      }}
     />
   );
 };

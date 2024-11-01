@@ -3,6 +3,7 @@ import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
 import { FinanceProvider } from '@/contexts/FinanceContext';
 import customTheme from '@/styles/theme';
+import '@/i18n';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (

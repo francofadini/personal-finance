@@ -16,6 +16,8 @@ export const createAccountUseCase = async (accountData) => {
       balance: accountData.balance || 0,
       currency: accountData.currency || 'EUR',
       identifier: accountData.identifier,
+      institutionName: accountData.institutionName,
+      institutionLogo: accountData.institutionLogo,
       metadata: accountData.metadata
     });
 
