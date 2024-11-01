@@ -1,5 +1,7 @@
 import { connectToDatabase } from "@/lib/mongoose";
 import Account from '@/backend/models/Account';
+import Transaction from '@/backend/models/Transaction';
+import { categorizeNewTransactionUseCase } from '@/backend/use-cases/transaction/categorizeNewTransactionUseCase';
 
 const API_URL = 'https://bankaccountdata.gocardless.com/api/v2';
 const SECRET_ID = process.env.GOCARDLESS_SECRET_ID;
@@ -117,15 +119,14 @@ export const finalizeRequisition = async (ref) => {
   }
 };
 
-export const fetchAccountBalance = async (accountId) => {
+export const fetchAccountBalance = async (account) => {
   await connectToDatabase();
-  const account = await Account.findById(accountId);
   if (!account || !account.metadata.accountId) {
-    throw new Error(`No account found for ${accountId}`);
+    throw new Error(`No account provided`);
   }
   const gocardlessAccountId = account.metadata.accountId;
-  if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
-    return;
+  if (account.lastBalanceSync && Date.now() - account.lastBalanceSync < 24 * 60 * 60 * 1000) {
+    return { status: 'skipped', message: 'Balance synced recently' };
   }
 
   try {
@@ -135,11 +136,15 @@ export const fetchAccountBalance = async (accountId) => {
     });
     if (!balanceResponse.ok) throw new Error(`Failed to fetch balance: ${balanceResponse.status}`);
     const balances = await balanceResponse.json();
+    account.balance = balances.balances?.[0]?.balanceAmount?.amount;
+    account.currency = balances.balances?.[0]?.balanceAmount?.currency;
+    account.lastBalanceSync = new Date();
+    await account.save();
     console.log('✅ Balance fetched successfully');
-    return balances;
+    return { status: 'success', balance: account.balance, currency: account.currency };
   } catch (error) {
-    console.error('❌ Failed to fetch balance:', error);
-    throw new Error(`Failed to fetch balance for account ${accountId}`);
+    console.error('❌ Failed to fetch balance:', error.message);
+    return { status: 'error', message: error.message };
   }
 };
 
@@ -150,7 +155,7 @@ export const fetchAccountAndDetails = async (accountId) => {
     throw new Error(`No account found for ${accountId}`);
   }
   const gocardlessAccountId = account.metadata.accountId;
-  if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
+  if (account.lastDetailsSync && Date.now() - account.lastDetailsSync < 24 * 60 * 60 * 1000) {
     return { account, details: null, balances: null };
   }
   try {
@@ -160,7 +165,7 @@ export const fetchAccountAndDetails = async (accountId) => {
     const accountResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}`, { 
       headers: await getHeaders() 
     });
-    const account = await accountResponse.json();
+    const accountData = await accountResponse.json();
     if (accountResponse.status !== 200) console.warn(`Failed to fetch account: ${accountResponse.status}`);
     
     // Add delay to avoid rate limits
@@ -183,9 +188,103 @@ export const fetchAccountAndDetails = async (accountId) => {
     const balances = await balancesResponse.json();
     if (balancesResponse.status !== 200) console.warn(`Failed to fetch balances: ${balancesResponse.status}`);
 
-    return { account, details, balances };
+    account.lastDetailsSync = new Date();
+    await account.save();
+
+    return { account:accountData, details, balances };
   } catch (error) {
     console.error('❌ Failed to fetch account data:', error);
-    throw new Error('Could not retrieve account information');
+    return;
+  }
+};
+
+export const syncTransactions = async (account) => {
+  try {
+    await connectToDatabase();
+    if (!account || !account.metadata?.accountId) {
+      throw new Error(`No account provided`);
+    }
+
+    // Check last sync time (24h)
+    if (account.lastTransactionsSync && Date.now() - account.lastTransactionsSync < 24 * 60 * 60 * 1000) {
+      console.log('✅ Transactions synced recently');
+      return { status: 'skipped', message: 'Transactions synced recently' };
+    }
+
+    const headers = await getHeaders();
+    const gocardlessAccountId = account.metadata.accountId;
+    
+    console.log('🔄 Fetching transactions for account:', gocardlessAccountId);
+    const response = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/transactions`, {
+      headers
+    });
+
+    if (!response.ok) throw new Error(`Failed to fetch transactions: ${response.status}`);
+    const { transactions } = await response.json();
+    const allTransactions = [...transactions.booked, ...transactions.pending];
+
+    // Process transactions
+    const results = await Promise.all(allTransactions.map(async (gcTransaction) => {
+      try {
+        console.log('🔄 Processing transaction:', gcTransaction);
+        // Check if transaction already exists
+        const existingTransaction = await Transaction.findOne({
+          accountId: account._id,
+          'metadata.gocardless.transactionId': gcTransaction.transactionId
+        });
+
+        if (existingTransaction) {
+          return { status: 'skipped', transactionId: gcTransaction.transactionId };
+        }
+
+        // Create new transaction
+        const newTransaction = new Transaction({
+          userId: account.userId,
+          accountId: account._id,
+          amount: parseFloat(gcTransaction.transactionAmount.amount),
+          currency: gcTransaction.transactionAmount.currency,
+          description: gcTransaction.remittanceInformationUnstructured || 'No description',
+          date: new Date(gcTransaction.valueDate || gcTransaction.bookingDate),
+          metadata: {
+            gocardless: {
+              transactionId: gcTransaction.transactionId,
+              status: gcTransaction.status
+            }
+          }
+        });
+
+        await newTransaction.save();
+        await categorizeNewTransactionUseCase(newTransaction);
+        return { 
+          status: 'success', 
+          transactionId: newTransaction._id 
+        };
+
+      } catch (error) {
+        console.error('Error processing transaction:', error);
+        return { 
+          status: 'error', 
+          transactionId: gcTransaction.transactionId,
+          message: error.message 
+        };
+      }
+    }));
+
+    // Update account sync time
+    account.lastTransactionsSync = new Date();
+    await account.save();
+
+    return {
+      status: 'success',
+      total: transactions.length,
+      created: results.filter(r => r.status === 'created').length,
+      skipped: results.filter(r => r.status === 'skipped').length,
+      errors: results.filter(r => r.status === 'error').length,
+      details: results
+    };
+
+  } catch (error) {
+    console.error('❌ Sync transactions error', error.message);
+    return { status: 'error', message: error.message };
   }
 };

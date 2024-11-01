@@ -38,10 +38,9 @@ export const createAccountOrchestrator = {
           throw new Error(`Failed to fetch account details for ${accountId}`);
         }
         savedAccount.name = details.account?.details || account?.iban;
-        savedAccount.balance = balances.balances?.[0]?.balanceAmount?.amount;
-        savedAccount.currency = balances.balances?.[0]?.balanceAmount?.currency;
+        savedAccount.balance = balances.balances?.[0]?.balanceAmount?.amount ?? 0;
+        savedAccount.currency = balances.balances?.[0]?.balanceAmount?.currency ?? 'EUR';
         savedAccount.identifier = account.iban;
-        savedAccount.lastSync = new Date();
         await savedAccount.save();
 
         savedAccounts.push(savedAccount);

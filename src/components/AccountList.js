@@ -37,7 +37,7 @@ const AccountList = ({ accounts, onDeleteAccount, onSyncAccount }) => {
         >
           <List.Item.Meta
             title={account.name}
-            description={`Última sincronización: ${new Date(account.lastSync).toLocaleString()}`}
+            description={`Última sincronización: ${new Date(account.lastTransactionsSync).toLocaleString()}`}
           />
           <Collapse>
             <Panel header="Detalles de la cuenta" key="1">

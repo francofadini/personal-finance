@@ -3,7 +3,7 @@ import { authOptions } from '../../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import Account from '@/backend/models/Account';
 import { fetchAccountBalance } from '@/backend/services/gocardlessService';
-import { get } from 'mongoose';
+import { syncTransactions } from '@/backend/services/gocardlessService';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -28,19 +28,21 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Account not found' });
     }
 
-    const balances = await fetchAccountBalance(req.query.accountId);
+    const balanceResult = await fetchAccountBalance(account);
+    const transactionsResult = await syncTransactions(account);
 
-    if (balances) {
-      account.balance = balances.balances?.[0]?.balanceAmount?.amount;
-      account.currency = balances.balances?.[0]?.balanceAmount?.currency;
-      account.lastSync = new Date();
-      await account.save();
+    if(balanceResult.status != 'error' || transactionsResult.status != 'error') {
+      console.log('✅ Account sync completed');
+      res.status(200).json(account);
+    } else if (balanceResult.status == 'error' || transactionsResult.status == 'error') {
+      console.error('❌ Account sync failed');
+      res.status(409).json({ error: 'Failed to sync account' });
+    } else {
+      console.log('✅ Account sync partially completed');
+      res.status(200).json(account);
     }
-
-    console.log('✅ Account sync completed');
-    res.status(200).json(account);
   } catch (error) {
-    console.error('❌ Account sync failed:', error);
+    console.error('❌ Account sync failed');
     res.status(500).json({ error: 'Failed to sync account' });
   }
 } 

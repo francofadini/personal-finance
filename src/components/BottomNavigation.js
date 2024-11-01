@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { WalletOutlined, TagsOutlined, LogoutOutlined } from '@ant-design/icons';
+import { WalletOutlined, TagsOutlined, LogoutOutlined, TransactionOutlined } from '@ant-design/icons';
 
 const NavBar = styled.nav`
   position: fixed;
@@ -54,6 +54,14 @@ const BottomNavigation = ({ onSignOut }) => {
       >
         <IconWrapper><WalletOutlined /></IconWrapper>
         Cuentas
+      </NavItem>
+      <NavItem 
+        href="/transactions" 
+        onClick={(e) => { e.preventDefault(); handleNavigation('/transactions'); }}
+        active={router.pathname === '/transactions'}
+      >
+        <IconWrapper><TransactionOutlined /></IconWrapper>
+        Transacciones
       </NavItem>
       <NavItem 
         href="/categories" 

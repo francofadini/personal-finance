@@ -1,10 +1,46 @@
 import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema({
-  amount: { type: Number, required: true },
-  description: { type: String, required: true },
-  date: { type: Date, default: Date.now },
-  category: { type: String, required: true },
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    required: true 
+  },
+  accountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account',
+    required: true
+  },
+  amount: { 
+    type: Number, 
+    required: true 
+  },
+  currency: {
+    type: String,
+    required: true,
+    default: 'EUR'
+  },
+  description: { 
+    type: String, 
+    required: true 
+  },
+  date: { 
+    type: Date, 
+    required: true 
+  },
+  categoryId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
+  recurrentExpenseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'RecurrentExpense'
+  },
+  metadata: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  }
 });
 
-export const Transaction = mongoose.models.Transaction || mongoose.model('Transaction', transactionSchema);
+transactionSchema.index({ userId: 1, date: -1 });
+
+export default mongoose.models.Transaction || mongoose.model('Transaction', transactionSchema);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Button, message, Space, Card } from 'antd';
-import { PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import Layout from '@/components/Layout';
 import { categoryService } from '@/services/categoryService';
 import styled from 'styled-components';
@@ -133,6 +133,21 @@ const CategoriesPage = () => {
     }
   };
 
+  const handleApplyRules = async (categoryId) => {
+    try {
+      const response = await fetch(`/api/categories/${categoryId}/apply-rules`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) throw new Error('Failed to apply rules');
+      
+      const result = await response.json();
+      message.success(`Categorized ${result.categorized} transactions`);
+    } catch (error) {
+      message.error('Error applying category rules');
+    }
+  };
+
   const renderCategory = (category) => {
     const subcategories = categories.filter(cat => cat.parentId === category._id);
     
@@ -164,6 +179,13 @@ const CategoriesPage = () => {
               onClick={() => handleDelete(category._id)}
             >
               Delete
+            </Button>
+            <Button
+              size="small"
+              icon={<ThunderboltOutlined />}
+              onClick={() => handleApplyRules(category._id)}
+            >
+              Apply Rules
             </Button>
           </ActionSpace>
         </CategoryItem>
