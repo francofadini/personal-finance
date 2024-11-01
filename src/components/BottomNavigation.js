@@ -64,6 +64,14 @@ const BottomNavigation = ({ onSignOut }) => {
         Categorías
       </NavItem>
       <NavItem 
+        href="/recurrent-expenses" 
+        onClick={(e) => { e.preventDefault(); handleNavigation('/recurrent-expenses'); }}
+        active={router.pathname === '/recurrent-expenses'}
+      >
+        <IconWrapper><WalletOutlined /></IconWrapper>
+        Gastos recurrentes
+      </NavItem>
+      <NavItem 
         href="#" 
         onClick={(e) => { e.preventDefault(); handleNavigation('signout'); }}
       >

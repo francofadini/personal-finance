@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
-import { Category } from '@/backend/models/Category';
+import { RecurrentExpense } from '@/backend/models/RecurrentExpense';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -14,30 +14,26 @@ export default async function handler(req, res) {
 
     switch (req.method) {
       case 'GET':
-        try {
-          const categories = await Category.find({ 
-            userId: session.user.id 
-          }).sort('order').lean();
-          return res.status(200).json(categories);
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
+        const expenses = await RecurrentExpense.find({ userId: session.user.id })
+          .populate('categoryId', 'name icon color')
+          .sort('name')
+          .lean();
+        return res.status(200).json(expenses);
 
       case 'POST':
-        const newCategory = new Category({
+        const newExpense = new RecurrentExpense({
           ...req.body,
           userId: session.user.id
         });
-        await newCategory.save();
-        return res.status(201).json(newCategory);
+        await newExpense.save();
+        return res.status(201).json(newExpense);
 
       default:
         res.setHeader('Allow', ['GET', 'POST']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
-    console.error('Categories API Error:', error);
+    console.error('Recurrent Expenses API Error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 } 
