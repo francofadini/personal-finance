@@ -125,7 +125,7 @@ export const fetchAccountBalance = async (accountId) => {
   }
   const gocardlessAccountId = account.metadata.accountId;
   if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
-    throw new Error(`Skipping fetch for account ${gocardlessAccountId}, last synced at ${account.lastSync}`);
+    return;
   }
 
   try {
@@ -151,7 +151,7 @@ export const fetchAccountAndDetails = async (accountId) => {
   }
   const gocardlessAccountId = account.metadata.accountId;
   if (account.lastSync && Date.now() - account.lastSync < 24 * 60 * 60 * 1000) {
-    throw new Error(`Skipping fetch for account ${gocardlessAccountId}, last synced at ${account.lastSync}`);
+    return { account, details: null, balances: null };
   }
   try {
     console.log('🔄 Fetching account data for:', gocardlessAccountId);
