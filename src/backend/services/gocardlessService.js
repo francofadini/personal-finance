@@ -29,7 +29,7 @@ const getAccessToken = async () => {
     tokenExpiration = new Date(Date.now() + data.access_expires * 1000);
     return accessToken;
   } catch (error) {
-    console.error('❌ Failed to get access token:', error);
+    console.error('❌ Failed to get access token:', error.message);
     throw new Error('Authentication failed with GoCardless');
   }
 };
@@ -41,39 +41,36 @@ const getHeaders = async () => {
       'Content-Type': 'application/json',
     };
   } catch (error) {
-    console.error('❌ Failed to get headers:', error);
+    console.error('❌ Failed to get headers:', error.message);
     throw error;
   }
 };
 
 export const fetchInstitutions = async (countryCode) => {
   try {
-    // if (process.env.NODE_ENV === 'development') {
-    //   return [
-    //     { 
-    //       id: 'SANDBOXFINANCE_SFIN0000', 
-    //       name: 'Sandbox Finance', 
-    //       logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg' 
-    //     }
-    //   ]
-    // }
-    console.log('🔄 Fetching institutions for:', countryCode);
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        { 
+          id: 'SANDBOXFINANCE_SFIN0000', 
+          name: 'Sandbox Finance', 
+          logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg' 
+        }
+      ]
+    }
     const response = await fetch(`${API_URL}/institutions/?country=${countryCode}`, { 
       headers: await getHeaders() 
     });
     if (!response.ok) throw new Error(`Failed to fetch institutions: ${response.status}`);
     const data = await response.json();
-    console.log('✅ Institutions fetched successfully');
     return data;
   } catch (error) {
-    console.error('❌ Failed to fetch institutions:', error);
+    console.error('❌ Failed to fetch institutions:', error.message);
     throw new Error('Could not retrieve institutions list');
   }
 };
 
 export const createRequisition = async (institutionId, redirectUrl) => {
   try {
-    console.log('🔄 Creating requisition:', { institutionId, redirectUrl });
     const response = await fetch(`${API_URL}/requisitions/`, {
       method: 'POST',
       headers: await getHeaders(),
@@ -86,17 +83,15 @@ export const createRequisition = async (institutionId, redirectUrl) => {
     });
     if (!response.ok) throw new Error(`Failed to create requisition: ${response.status}`);
     const data = await response.json();
-    console.log('✅ Requisition created');
     return data;
   } catch (error) {
-    console.error('❌ Failed to create requisition:', error);
+    console.error('❌ Failed to create requisition:', error.message);
     throw new Error('Could not create bank connection request');
   }
 };
 
 export const finalizeRequisition = async (ref) => {
   try {
-    console.log('🔄 Finalizing requisition with ref:', ref);
     const requisitionsResponse = await fetch(`${API_URL}/requisitions/?reference=${ref}`, {
       headers: await getHeaders(),
     });
@@ -106,7 +101,6 @@ export const finalizeRequisition = async (ref) => {
     if (!requisitions.results.length) throw new Error('No requisition found with this reference');
 
     const requisition = requisitions.results[0];
-    console.log('✅ Requisition found');
 
     if (requisition.status !== 'LN') {
       throw new Error(`Invalid requisition status: ${requisition.status}`);
@@ -114,7 +108,7 @@ export const finalizeRequisition = async (ref) => {
 
     return requisition;
   } catch (error) {
-    console.error('❌ Failed to finalize requisition:', error);
+    console.error('❌ Failed to finalize requisition:', error.message);
     throw new Error('Could not complete bank connection');
   }
 };
@@ -130,7 +124,6 @@ export const fetchAccountBalance = async (account) => {
   }
 
   try {
-    console.log('🔄 Fetching balance for account:', gocardlessAccountId);
     const balanceResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/balances`, { 
       headers: await getHeaders() 
     });
@@ -140,7 +133,6 @@ export const fetchAccountBalance = async (account) => {
     account.currency = balances.balances?.[0]?.balanceAmount?.currency;
     account.lastBalanceSync = new Date();
     await account.save();
-    console.log('✅ Balance fetched successfully');
     return { status: 'success', balance: account.balance, currency: account.currency };
   } catch (error) {
     console.error('❌ Failed to fetch balance:', error.message);
@@ -159,8 +151,6 @@ export const fetchAccountAndDetails = async (accountId) => {
     return { account, details: null, balances: null };
   }
   try {
-    console.log('🔄 Fetching account data for:', gocardlessAccountId);
-    
     // Fetch account first
     const accountResponse = await fetch(`${API_URL}/accounts/${gocardlessAccountId}`, { 
       headers: await getHeaders() 
@@ -193,7 +183,7 @@ export const fetchAccountAndDetails = async (accountId) => {
 
     return { account:accountData, details, balances };
   } catch (error) {
-    console.error('❌ Failed to fetch account data:', error);
+    console.error('❌ Failed to fetch account data:', error.message);
     return;
   }
 };
@@ -207,14 +197,13 @@ export const syncTransactions = async (account) => {
 
     // Check last sync time (24h)
     if (account.lastTransactionsSync && Date.now() - account.lastTransactionsSync < 24 * 60 * 60 * 1000) {
-      console.log('✅ Transactions synced recently');
       return { status: 'skipped', message: 'Transactions synced recently' };
     }
 
     const headers = await getHeaders();
     const gocardlessAccountId = account.metadata.accountId;
     
-    console.log('🔄 Fetching transactions for account:', gocardlessAccountId);
+  
     const response = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/transactions`, {
       headers
     });
@@ -226,7 +215,6 @@ export const syncTransactions = async (account) => {
     // Process transactions
     const results = await Promise.all(allTransactions.map(async (gcTransaction) => {
       try {
-        console.log('🔄 Processing transaction:', gcTransaction);
         // Check if transaction already exists
         const existingTransaction = await Transaction.findOne({
           accountId: account._id,
@@ -262,7 +250,7 @@ export const syncTransactions = async (account) => {
         };
 
       } catch (error) {
-        console.error('Error processing transaction:', error);
+        console.error('❌ Error processing transaction:', error.message);
         return { 
           status: 'error', 
           transactionId: gcTransaction.transactionId,

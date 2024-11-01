@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
-    console.error('Recurrent Expense API Error:', error);
+    console.error('❌ Recurrent Expense API Error:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 } 

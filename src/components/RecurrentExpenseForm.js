@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Select, Modal, Space, Tag } from 'antd';
+import { Form, Input, InputNumber, Select, Modal, Space, Tag, message } from 'antd';
 import styled from 'styled-components';
 import { FREQUENCY_PRESETS } from '@/services/recurrentExpenseService';
 
@@ -83,7 +83,7 @@ const RecurrentExpenseForm = ({
       await onSubmit(values);
       form.resetFields();
     } catch (error) {
-      console.error('Form validation failed:', error);
+      message.error('Failed to save recurrent expense. Please try again.');
     }
   };
 

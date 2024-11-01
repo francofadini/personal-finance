@@ -45,7 +45,7 @@ export const createAccountOrchestrator = {
 
         savedAccounts.push(savedAccount);
       } catch (error) {
-        console.error('❌ Failed to create account:', accountId, error);
+        console.error('❌ Failed to create account:', error.message);
         // Continue with next account
       }
     }

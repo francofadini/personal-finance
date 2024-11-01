@@ -21,7 +21,7 @@ async function handleGetRequisitions(req, res) {
     const requisitions = await getRequisitions(limit, offset);
     res.status(200).json(requisitions);
   } catch (error) {
-    console.error('Error in GoCardless requisitions endpoint:', error);
+    console.error('❌ Error in GoCardless requisitions endpoint:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
@@ -38,7 +38,7 @@ async function handleCreateRequisition(req, res) {
     const requisition = await createRequisition(institutionId, redirectUrl);
     res.status(200).json(requisition);
   } catch (error) {
-    console.error('Error in create requisition endpoint:', error);
+    console.error('❌ Error in create requisition endpoint:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

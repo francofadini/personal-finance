@@ -3,7 +3,7 @@ import { RecurrentExpense } from '@/backend/models/RecurrentExpense';
 
 export const categorizeNewTransactionUseCase = async (transaction) => {
   try {
-    
+
     const [categories, recurrentExpenses] = await Promise.all([
       Category.find({ userId: transaction.userId }),
       RecurrentExpense.find({ userId: transaction.userId })
@@ -48,7 +48,7 @@ export const categorizeNewTransactionUseCase = async (transaction) => {
     return { status: 'uncategorized' };
 
   } catch (error) {
-    console.error('❌ Error categorizing transaction:', error);
+    console.error('❌ Error categorizing transaction:', error.message);
     throw new Error(`Failed to categorize transaction: ${error.message}`);
   }
 }; 

@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     return res.status(200).json(result);
 
   } catch (error) {
-    console.error('Apply rules API Error:', error);
+    console.error('❌ Apply rules API Error:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 } 

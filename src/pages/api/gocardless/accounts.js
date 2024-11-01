@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ accounts });
   } catch (error) {
-    console.error('Error in GoCardless accounts endpoint:', error);
+    console.error('❌ Error in GoCardless accounts endpoint:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

@@ -59,7 +59,7 @@ const CategoryForm = ({
       await onSubmit(values);
       form.resetFields();
     } catch (error) {
-      console.error('Form validation failed:', error);
+      message.error('Failed to save category. Please try again.');
     }
   };
 

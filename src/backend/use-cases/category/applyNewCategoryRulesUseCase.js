@@ -2,7 +2,6 @@ import Transaction from '@/backend/models/Transaction';
 
 export const applyNewCategoryRulesUseCase = async (category) => {
   try {
-    console.log('🔄 Applying new category rules:', category._id);
     
     if (!category.keywords?.length) {
       return { status: 'skipped', reason: 'no_keywords' };
@@ -29,7 +28,7 @@ export const applyNewCategoryRulesUseCase = async (category) => {
             transactionId: transaction._id
           };
         } catch (error) {
-          console.error('Error updating transaction:', transaction._id, error);
+          console.error('❌ Error updating transaction:', error.message);
           return {
             status: 'error',
             transactionId: transaction._id,
@@ -46,11 +45,10 @@ export const applyNewCategoryRulesUseCase = async (category) => {
       details: results
     };
 
-    console.log('✅ Category rules applied:', summary);
     return summary;
 
   } catch (error) {
-    console.error('❌ Error applying category rules:', error);
+    console.error('❌ Error applying category rules:', error.message);
     throw new Error(`Failed to apply category rules: ${error.message}`);
   }
 }; 

@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     });
 
     if (!account) {
-      console.log('❌ Account not found:', { accountId, userId: session.user.id });
+      console.error('❌ Account not found:', { accountId, userId: session.user.id });
       return res.status(404).json({ error: 'Account not found' });
     }
 

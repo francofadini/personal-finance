@@ -4,7 +4,6 @@ import Account from '@/backend/models/Account';
 export const createAccountUseCase = async (accountData) => {
   try {
     await connectToDatabase();
-    console.log('🔄 Creating account:', accountData);
 
     //validate accountData
     if (!accountData.userId || !accountData.name || !accountData.identifier) {
@@ -22,7 +21,6 @@ export const createAccountUseCase = async (accountData) => {
 
     const savedAccount = await account.save();
     
-    console.log('✅ Account saved successfully:', savedAccount._id);
     return savedAccount;
   } catch (error) {
     console.error('❌ Failed to create account:', error.message);

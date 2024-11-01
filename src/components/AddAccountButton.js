@@ -56,8 +56,7 @@ const AddAccountButton = ({ onAccountAdded }) => {
       const data = await response.json();
       setInstitutions(data);
     } catch (error) {
-      console.error('Error fetching institutions:', error);
-      // You might want to show an error message to the user here
+      message.error('Failed to fetch institutions. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -81,7 +80,6 @@ const AddAccountButton = ({ onAccountAdded }) => {
       const result = await onAccountAdded(institutionId);
       window.location.href = result.link;
     } catch (error) {
-      console.error('Error creating requisition:', error);
       message.error('Failed to connect to the selected institution. Please try again.');
     }
   };

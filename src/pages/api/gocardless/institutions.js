@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const institutions = await fetchInstitutions(country);
     res.status(200).json(institutions);
   } catch (error) {
-    console.error('Error in GoCardless institutions endpoint:', error);
+    console.error('❌ Error in GoCardless institutions endpoint:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
