@@ -3,7 +3,6 @@ import { RecurrentExpense } from '@/backend/models/RecurrentExpense';
 
 export const categorizeNewTransactionUseCase = async (transaction) => {
   try {
-    console.log('🔄 Categorizing new transaction:', transaction._id);
     
     const [categories, recurrentExpenses] = await Promise.all([
       Category.find({ userId: transaction.userId }),

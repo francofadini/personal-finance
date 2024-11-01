@@ -48,15 +48,15 @@ const getHeaders = async () => {
 
 export const fetchInstitutions = async (countryCode) => {
   try {
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        { 
-          id: 'SANDBOXFINANCE_SFIN0000', 
-          name: 'Sandbox Finance', 
-          logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg' 
-        }
-      ]
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   return [
+    //     { 
+    //       id: 'SANDBOXFINANCE_SFIN0000', 
+    //       name: 'Sandbox Finance', 
+    //       logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg' 
+    //     }
+    //   ]
+    // }
     console.log('🔄 Fetching institutions for:', countryCode);
     const response = await fetch(`${API_URL}/institutions/?country=${countryCode}`, { 
       headers: await getHeaders() 
@@ -243,8 +243,9 @@ export const syncTransactions = async (account) => {
           accountId: account._id,
           amount: parseFloat(gcTransaction.transactionAmount.amount),
           currency: gcTransaction.transactionAmount.currency,
-          description: gcTransaction.remittanceInformationUnstructured || 'No description',
-          date: new Date(gcTransaction.valueDate || gcTransaction.bookingDate),
+          description: gcTransaction.creditorName || gcTransaction.remittanceInformationUnstructured?.trim() || 'No description',
+          note: gcTransaction.remittanceInformationUnstructured?.trim() || 'No description',
+          date: new Date(gcTransaction.bookingDateTime || gcTransaction.valueDateTime),
           metadata: {
             gocardless: {
               transactionId: gcTransaction.transactionId,
