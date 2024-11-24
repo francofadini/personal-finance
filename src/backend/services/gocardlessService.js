@@ -202,10 +202,15 @@ export const syncTransactions = async (account) => {
 
     const headers = await getHeaders();
     const gocardlessAccountId = account.metadata.accountId;
+    const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     
-  
+    const params = {
+      date_from: account.lastTransactionsSync ? account.lastTransactionsSync.toISOString() : oneMonthAgo.toISOString()
+    };
+    console.log('params', params);
     const response = await fetch(`${API_URL}/accounts/${gocardlessAccountId}/transactions`, {
-      headers
+      headers,
+      params
     });
 
     if (!response.ok) throw new Error(`Failed to fetch transactions: ${response.status}`);

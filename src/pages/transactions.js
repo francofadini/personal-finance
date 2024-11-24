@@ -29,6 +29,7 @@ const TransactionsPage = () => {
 
   useEffect(() => {
     loadData();
+    loadCategories();
   }, [filters, pagination.current]);
 
   const loadData = async () => {
@@ -47,6 +48,7 @@ const TransactionsPage = () => {
       if (!response.ok) throw new Error('Failed to fetch transactions');
       
       const data = await response.json();
+      console.log('data', data);
       setTransactions(data.transactions);
       setPagination(prev => ({
         ...prev,
@@ -57,6 +59,14 @@ const TransactionsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadCategories = async () => {
+    const response = await fetch('/api/categories');
+    if (!response.ok) throw new Error('Failed to fetch categories');
+    const data = await response.json();
+    console.log('data', data);
+    setCategories(data);
   };
 
   const columns = [
@@ -76,15 +86,18 @@ const TransactionsPage = () => {
     },
     {
       title: 'Category',
-      dataIndex: ['categoryId', 'name'],
-      render: (name, record) => name ? (
+      dataIndex: 'categoryId',
+      render: (categoryId, record) => {
+        const category = categories.find(c => c._id === categoryId);
+        return (
         <Space>
-          <span style={{ color: record.categoryId.color }}>
-            {record.categoryId.icon}
+          <span style={{ color: category ? category.color : 'inherit' }}>
+            {category ? category.icon : ''}
           </span>
-          {name}
-        </Space>
-      ) : 'Uncategorized'
+          {category ? category.name : 'Uncategorized'}
+          </Space>
+        );
+      }
     },
     {
       title: 'Account',
