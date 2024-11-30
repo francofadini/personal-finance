@@ -143,7 +143,6 @@ const AccountsPage = () => {
     <Layout>
       <MobileHeader
         title={t('accounts.title')}
-        onBack={() => router.push('/')}
         action={<AddAccountButton onAccountAdded={handleAddAccount} />}
       />
       <AccountList
