@@ -40,6 +40,8 @@ const CategoryForm = ({
   const [form] = Form.useForm();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  const isSubcategory = !!parentCategory || initialValues?.parentId;
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -52,6 +54,13 @@ const CategoryForm = ({
   const handleEmojiSelect = (emojiData) => {
     form.setFieldsValue({ icon: emojiData.emoji });
     setShowEmojiPicker(false);
+  };
+
+  const handleBudgetChange = (e) => {
+    const value = e.target.value.replace(/[^0-9.]/g, '');
+    if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
+      form.setFieldsValue({ monthlyBudget: value });
+    }
   };
 
   return (
@@ -69,26 +78,36 @@ const CategoryForm = ({
           <Input placeholder="Category name" />
         </Form.Item>
 
-        <Form.Item
-          name="icon"
-          label="Icon"
-          rules={[{ required: true, message: 'Please select an icon!' }]}
-        >
-          <EmojiButton onClick={() => setShowEmojiPicker(true)}>
-            {form.getFieldValue('icon') || '🏷️'}
-          </EmojiButton>
-        </Form.Item>
+        {!isSubcategory && (
+          <Form.Item
+            name="icon"
+            label="Icon"
+            rules={[{ required: !isSubcategory, message: 'Please select an icon!' }]}
+          >
+            <EmojiButton onClick={() => setShowEmojiPicker(true)}>
+              {form.getFieldValue('icon') || '🏷️'}
+            </EmojiButton>
+          </Form.Item>
+        )}
 
         <Form.Item
           name="monthlyBudget"
           label="Monthly Budget"
-          rules={[{ type: 'number', min: 0 }]}
+          rules={[{ 
+            validator: (_, value) => {
+              if (!value || value >= 0) return Promise.resolve();
+              return Promise.reject('Budget must be a positive number');
+            }
+          }]}
         >
-          <InputNumber 
+          <Input
             style={{ width: '100%' }}
-            placeholder="0.00"
-            formatter={value => `${value}€`}
-            parser={value => value.replace('€', '')}
+            placeholder="0"
+            type="number"
+            inputMode="decimal"
+            pattern="[0-9]*"
+            onChange={handleBudgetChange}
+            suffix="€"
           />
         </Form.Item>
 
