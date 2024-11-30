@@ -1,93 +1,82 @@
-import React, { useEffect } from 'react';
-import { Form, Input, InputNumber, Select, Modal, ColorPicker, Space, Button, Popover } from 'antd';
-import EmojiPicker from 'emoji-picker-react';
+import React, { useState } from 'react';
+import { Form, Input, InputNumber, Select, Button } from 'antd';
 import styled from 'styled-components';
-
-const COLORS = [
-  '#F7B731', '#8854d0', '#E04443', '#4E74EF', '#20bf6b',
-  '#778ca3', '#0fb9b1', '#2d98da', '#B33771', '#6D214F'
-];
+import EmojiPicker from 'emoji-picker-react';
+import ModalBottomSheet from './ModalBottomSheet';
 
 const StyledForm = styled(Form)`
-  .ant-form-item { margin-bottom: 16px; }
+  .ant-form-item:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const EmojiButton = styled(Button)`
-  min-width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+
+  .ant-btn {
+    flex: 1;
+    height: 44px;
+  }
 `;
 
 const CategoryForm = ({ 
-  visible, 
-  onCancel, 
-  onSubmit, 
   initialValues = null,
   parentCategory = null,
-  loading 
+  onSubmit,
+  onCancel
 }) => {
   const [form] = Form.useForm();
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
-
-  useEffect(() => {
-    if (visible) {
-      if (initialValues) {
-        // Editing mode
-        form.setFieldsValue({
-          name: initialValues.name,
-          monthlyBudget: initialValues.monthlyBudget,
-          keywords: initialValues.keywords || [],
-          color: initialValues.color,
-          icon: initialValues.icon
-        });
-      } else {
-        // Creation mode
-        form.setFieldsValue({
-          name: '',
-          monthlyBudget: 0,
-          keywords: [],
-          color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          icon: '😀'
-        });
-      }
-    }
-  }, [visible, initialValues, form]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      await onSubmit(values);
-      form.resetFields();
+      onSubmit(values);
     } catch (error) {
-      message.error('Failed to save category. Please try again.');
+      // Form validation error
     }
   };
 
-  const getTitle = () => {
-    if (initialValues) return "Edit Category";
-    if (parentCategory) return `New Subcategory for ${parentCategory.name}`;
-    return "New Category";
+  const handleEmojiSelect = (emojiData) => {
+    form.setFieldsValue({ icon: emojiData.emoji });
+    setShowEmojiPicker(false);
   };
 
   return (
-    <Modal
-      title={getTitle()}
-      open={visible}
-      onCancel={() => {
-        form.resetFields();
-        onCancel();
-      }}
-      onOk={handleSubmit}
-      confirmLoading={loading}
-      destroyOnClose={true}
-    >
-      <StyledForm form={form} layout="vertical">
+    <>
+      <StyledForm
+        form={form}
+        layout="vertical"
+        initialValues={initialValues}
+      >
         <Form.Item
           name="name"
           label="Name"
           rules={[{ required: true, message: 'Please input category name!' }]}
         >
-          <Input />
+          <Input placeholder="Category name" />
+        </Form.Item>
+
+        <Form.Item
+          name="icon"
+          label="Icon"
+          rules={[{ required: true, message: 'Please select an icon!' }]}
+        >
+          <EmojiButton onClick={() => setShowEmojiPicker(true)}>
+            {form.getFieldValue('icon') || '🏷️'}
+          </EmojiButton>
         </Form.Item>
 
         <Form.Item
@@ -97,6 +86,7 @@ const CategoryForm = ({
         >
           <InputNumber 
             style={{ width: '100%' }}
+            placeholder="0.00"
             formatter={value => `${value}€`}
             parser={value => value.replace('€', '')}
           />
@@ -111,39 +101,61 @@ const CategoryForm = ({
           />
         </Form.Item>
 
-        <Form.Item name="color" label="Color">
-          <ColorPicker
-            presets={[{ label: 'Recommended', colors: COLORS }]}
-            format="hex"
-          />
-        </Form.Item>
-
-        <Form.Item name="icon" label="Icon">
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <EmojiButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-              {form.getFieldValue('icon') || '😀'}
-            </EmojiButton>
-            {showEmojiPicker && (
-              <Popover
-                content={
-                  <EmojiPicker
-                    onEmojiClick={(emojiData) => {
-                      form.setFieldsValue({ icon: emojiData.emoji });
-                      setShowEmojiPicker(false);
-                    }}
-                  />
-                }
-                trigger="click"
-                open={showEmojiPicker}
-                onOpenChange={setShowEmojiPicker}
-              >
-                <div style={{ position: 'absolute', zIndex: 1000 }} />
-              </Popover>
-            )}
-          </Space>
-        </Form.Item>
+        <ButtonRow>
+          <Button onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="primary" onClick={handleSubmit}>
+            {initialValues ? 'Update' : 'Create'}
+          </Button>
+        </ButtonRow>
       </StyledForm>
-    </Modal>
+
+      <ModalBottomSheet
+        open={showEmojiPicker}
+        onDismiss={() => setShowEmojiPicker(false)}
+        title="Select Icon"
+      >
+        <EmojiPicker
+          onEmojiClick={handleEmojiSelect}
+          width="100%"
+          height="400px"
+          searchPlaceholder="Search emoji..."
+          previewConfig={{ showPreview: false }}
+          skinTonesDisabled
+          categories={[
+            {
+              name: "Smileys & People",
+              category: "smileys_people"
+            },
+            {
+              name: "Animals & Nature",
+              category: "animals_nature"
+            },
+            {
+              name: "Food & Drink",
+              category: "food_drink"
+            },
+            {
+              name: "Travel & Places",
+              category: "travel_places"
+            },
+            {
+              name: "Activities",
+              category: "activities"
+            },
+            {
+              name: "Objects",
+              category: "objects"
+            },
+            {
+              name: "Symbols",
+              category: "symbols"
+            }
+          ]}
+        />
+      </ModalBottomSheet>
+    </>
   );
 };
 

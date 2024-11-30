@@ -1,54 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { List, Button, message, Space, Card } from 'antd';
-import { PlusOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import Layout from '@/components/Layout';
-import { categoryService } from '@/services/categoryService';
+import { Button, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import Layout from '@/components/Layout';
+import MobileHeader from '@/components/MobileHeader';
+import CategoryListItem from '@/components/CategoryListItem';
 import CategoryForm from '@/components/CategoryForm';
+import ModalBottomSheet from '@/components/ModalBottomSheet';
+import { categoryService } from '@/services/categoryService';
 
-const AddButton = styled(Button)`
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
+const Container = styled.div`
+  padding: 8px;
 `;
 
-const StyledCard = styled(Card)`
-  margin-bottom: 16px;
-  .ant-card-body {
-    padding: 12px 24px;
-  }
-`;
-
-const CategoryItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  .category-icon {
-    font-size: 20px;
-    min-width: 24px;
-    text-align: center;
-  }
-  
-  .category-name {
-    flex: 1;
-    font-weight: 500;
-  }
-  
-  .category-budget {
-    color: #8c8c8c;
-    margin-right: 16px;
-  }
-`;
-
-const SubcategoriesList = styled.div`
-  margin-left: 40px;
-  margin-top: 8px;
-  border-left: 1px solid #f0f0f0;
-  padding-left: 16px;
-`;
-
-const ActionSpace = styled(Space)`
+const SubcategoryList = styled.div`
+  margin-left: 52px;
   margin-top: 8px;
 `;
 
@@ -56,11 +22,8 @@ const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
-  const [formData, setFormData] = useState({
-    initialValues: null,
-    parentCategory: null
-  });
-  const [formLoading, setFormLoading] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [parentCategory, setParentCategory] = useState(null);
 
   useEffect(() => {
     loadCategories();
@@ -78,15 +41,14 @@ const CategoriesPage = () => {
   };
 
   const handleSubmit = async (values) => {
-    setFormLoading(true);
     try {
       const dataToSubmit = {
         ...values,
-        parentId: formData.parentCategory?._id || null
+        parentId: parentCategory?._id || null
       };
 
-      if (formData.initialValues?._id) {
-        await categoryService.update(formData.initialValues._id, dataToSubmit);
+      if (editingCategory?._id) {
+        await categoryService.update(editingCategory._id, dataToSubmit);
         message.success('Category updated successfully');
       } else {
         await categoryService.create(dataToSubmit);
@@ -97,30 +59,13 @@ const CategoriesPage = () => {
       handleCloseForm();
     } catch (error) {
       message.error('Error saving category');
-    } finally {
-      setFormLoading(false);
     }
   };
 
   const handleCloseForm = () => {
     setFormVisible(false);
-    setFormData({ initialValues: null, parentCategory: null });
-  };
-
-  const handleEdit = (category) => {
-    setFormData({
-      initialValues: category,
-      parentCategory: null
-    });
-    setFormVisible(true);
-  };
-
-  const handleAddSubcategory = (parentCategory) => {
-    setFormData({
-      initialValues: null,
-      parentCategory
-    });
-    setFormVisible(true);
+    setEditingCategory(null);
+    setParentCategory(null);
   };
 
   const handleDelete = async (categoryId) => {
@@ -138,9 +83,7 @@ const CategoriesPage = () => {
       const response = await fetch(`/api/categories/${categoryId}/apply-rules`, {
         method: 'POST'
       });
-      
       if (!response.ok) throw new Error('Failed to apply rules');
-      
       const result = await response.json();
       message.success(`Categorized ${result.categorized} transactions`);
     } catch (error) {
@@ -152,78 +95,62 @@ const CategoriesPage = () => {
     const subcategories = categories.filter(cat => cat.parentId === category._id);
     
     return (
-      <StyledCard key={category._id}>
-        <CategoryItem>
-          <span className="category-icon" style={{ color: category.color }}>
-            {category.icon}
-          </span>
-          <span className="category-name">{category.name}</span>
-          <span className="category-budget">{category.monthlyBudget}€</span>
-          <ActionSpace>
-            {category.parentId === null && <Button 
-              size="small"
-              icon={<PlusCircleOutlined />}
-              onClick={() => handleAddSubcategory(category)}
-            >
-              Add Subcategory
-            </Button>}
-            <Button 
-              size="small"
-              onClick={() => handleEdit(category)}
-            >
-              Edit
-            </Button>
-            <Button 
-              size="small" 
-              danger 
-              onClick={() => handleDelete(category._id)}
-            >
-              Delete
-            </Button>
-            <Button
-              size="small"
-              icon={<ThunderboltOutlined />}
-              onClick={() => handleApplyRules(category._id)}
-            >
-              Apply Rules
-            </Button>
-          </ActionSpace>
-        </CategoryItem>
+      <div key={category._id}>
+        <CategoryListItem
+          category={category}
+          onEdit={() => {
+            setEditingCategory(category);
+            setFormVisible(true);
+          }}
+          onDelete={handleDelete}
+          onAddSub={() => {
+            setParentCategory(category);
+            setFormVisible(true);
+          }}
+          onApplyRules={handleApplyRules}
+        />
         {subcategories.length > 0 && (
-          <SubcategoriesList>
+          <SubcategoryList>
             {subcategories.map(subcat => renderCategory(subcat))}
-          </SubcategoriesList>
+          </SubcategoryList>
         )}
-      </StyledCard>
+      </div>
     );
   };
 
   return (
     <Layout>
-      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <MobileHeader
+        title="Categories"
+        action={
+          <Button 
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setFormVisible(true)}
+          >
+            Add
+          </Button>
+        }
+      />
+      
+      <Container>
         {categories
           .filter(cat => !cat.parentId)
-          .map(category => renderCategory(category))
-        }
-      </div>
-      <AddButton 
-        type="primary" 
-        icon={<PlusOutlined />} 
-        shape="circle" 
-        size="large"
-        onClick={() => {
-          setFormData({ initialValues: null, parentCategory: null });
-          setFormVisible(true);
-        }}
-      />
-      <CategoryForm
-        visible={formVisible}
-        onCancel={handleCloseForm}
-        onSubmit={handleSubmit}
-        initialValues={formData.initialValues}
-        parentCategory={formData.parentCategory}
-        loading={formLoading}
-      />
+          .map(renderCategory)}
+      </Container>
+
+      <ModalBottomSheet
+        title={`${editingCategory ? 'Edit' : 'Add'} Category`}
+        open={formVisible}
+        onDismiss={handleCloseForm}
+      >
+        <CategoryForm
+          initialValues={editingCategory}
+          parentCategory={parentCategory}
+          onSubmit={handleSubmit}
+          onCancel={handleCloseForm}
+        />
+      </ModalBottomSheet>
     </Layout>
   );
 };

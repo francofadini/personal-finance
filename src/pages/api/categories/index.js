@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import { Category } from '@/backend/models/Category';
+import { getRandomColor } from '@/utils/colorsUtils';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -25,8 +26,10 @@ export default async function handler(req, res) {
         }
 
       case 'POST':
+        const color = req.body.color || getRandomColor();
         const newCategory = new Category({
           ...req.body,
+          color,
           userId: session.user.id
         });
         await newCategory.save();

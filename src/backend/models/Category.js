@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },
   parentId: { type: mongoose.Schema.Types.ObjectId, default: null },
-  color: { type: String, default: '4E74EF' },
+  color: { type: String, default: '#4E74EF' },
   icon: { type: String, default: '💰' },
   keywords: [{ type: String }],
   monthlyBudget: { type: Number, default: 0 },
