@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Select, Spin, message } from 'antd';
+import { Button, Select, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import ModalBottomSheet from './ModalBottomSheet';
 
 const { Option } = Select;
 
@@ -9,8 +10,6 @@ const COUNTRIES = [
   { code: 'ES', name: 'Spain', emoji: '🇪🇸' },
   { code: 'BE', name: 'Belgium', emoji: '🇧🇪' },
 ];
-
-const DEFAULT_COUNTRY = 'ES';
 
 const Logo = styled.img`
   width: 20px;
@@ -25,8 +24,8 @@ const InstitutionOption = styled.div`
 `;
 
 const AddAccountButton = ({ onAccountAdded }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_COUNTRY);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState('ES');
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -36,15 +35,6 @@ const AddAccountButton = ({ onAccountAdded }) => {
       fetchInstitutions(selectedCountry);
     }
   }, [selectedCountry]);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setSearchValue('');
-  };
 
   const fetchInstitutions = async (countryCode) => {
     setLoading(true);
@@ -84,19 +74,29 @@ const AddAccountButton = ({ onAccountAdded }) => {
     }
   };
 
+  const handleDismiss = () => {
+    setIsOpen(false);
+  };
+
   return (
     <>
-      <Button type="primary" icon={<PlusOutlined />} iconPosition='end' onClick={showModal}>
+      <Button 
+        type="primary" 
+        icon={<PlusOutlined />} 
+        onClick={() => setIsOpen(true)}
+      >
         Add
       </Button>
-      <Modal
+      
+      <ModalBottomSheet
+        open={isOpen}
+        onDismiss={handleDismiss}
         title="Select Institution"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
+        blocking={false}
+        scrollLocking={false}
       >
         <Select
-          style={{ width: '100%', marginBottom: '20px' }}
+          style={{ width: '100%', marginBottom: '16px' }}
           placeholder="Select a country"
           onChange={handleCountryChange}
           value={selectedCountry}
@@ -107,6 +107,7 @@ const AddAccountButton = ({ onAccountAdded }) => {
             </Option>
           ))}
         </Select>
+
         {loading ? (
           <Spin />
         ) : (
@@ -129,7 +130,7 @@ const AddAccountButton = ({ onAccountAdded }) => {
             ))}
           </Select>
         )}
-      </Modal>
+      </ModalBottomSheet>
     </>
   );
 };
