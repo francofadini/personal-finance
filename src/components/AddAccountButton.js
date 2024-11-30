@@ -86,8 +86,8 @@ const AddAccountButton = ({ onAccountAdded }) => {
 
   return (
     <>
-      <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-        Add Account
+      <Button type="primary" icon={<PlusOutlined />} iconPosition='end' onClick={showModal}>
+        Add
       </Button>
       <Modal
         title="Select Institution"

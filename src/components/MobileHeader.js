@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Typography } from 'antd';
+import { Typography, Button, theme } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -8,34 +9,64 @@ const HeaderContainer = styled.div`
   position: sticky;
   top: 0;
   z-index: 10;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const TopRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 32px;
+  position: relative;
+`;
+
+const BackButtonWrapper = styled.div`
+  position: absolute;
+  left: 0;
+`;
+
+const ActionWrapper = styled.div`
+  position: absolute;
+  right: 0;
+`;
+
+const BackButton = styled(Button)`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  
+  .anticon {
+    color: ${() => {
+      const { token } = theme.useToken();
+      return token.colorPrimary;
+    }};
+  }
 `;
 
-const TitleWrapper = styled.div`
-  flex: 1;
-`;
-
-const StyledTitle = styled(Title).attrs({ level: 4 })`
-  margin: 0 !important;
-`;
-
-const ActionsWrapper = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const MobileHeader = ({ title, extra }) => {
+const MobileHeader = ({ title, onBack, action }) => {
   return (
     <HeaderContainer>
-      <TitleWrapper>
-        <StyledTitle>{title}</StyledTitle>
-      </TitleWrapper>
-      {extra && <ActionsWrapper>{extra}</ActionsWrapper>}
+      <TopRow>
+        {onBack && (
+          <BackButtonWrapper>
+            <BackButton onClick={onBack}>
+              <ArrowLeftOutlined />
+            </BackButton>
+          </BackButtonWrapper>
+        )}
+        {action && <ActionWrapper>{action}</ActionWrapper>}
+      </TopRow>
+      <Title level={4} style={{ margin: 0 }}>{title}</Title>
     </HeaderContainer>
   );
 };

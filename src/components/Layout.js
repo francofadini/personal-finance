@@ -15,7 +15,6 @@ const StyledLayout = styled(AntLayout)`
 
 const StyledContent = styled(Content)`
   flex: 1;
-  padding: 24px;
   padding-bottom: 70px; // Add padding to account for the TabBar height
 `;
 

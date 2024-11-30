@@ -8,7 +8,7 @@ const customTheme = {
     ...defaultSeed,
     colorPrimary: '#1890ff',
     fontFamily: "'Roboto', sans-serif",
-    borderRadius: 4,
+    borderRadius: 50,
   },
 };
 

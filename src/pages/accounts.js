@@ -143,9 +143,8 @@ const AccountsPage = () => {
     <Layout>
       <MobileHeader
         title={t('accounts.title')}
-        extra={[
-          <AddAccountButton key="add" onAccountAdded={handleAddAccount} />,
-        ]}
+        onBack={() => router.push('/')}
+        action={<AddAccountButton onAccountAdded={handleAddAccount} />}
       />
       <AccountList
         accounts={accounts}
