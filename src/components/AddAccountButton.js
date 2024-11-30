@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Select, Spin, message } from 'antd';
+import { Select, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import ModalBottomSheet from './ModalBottomSheet';
+import MainButton from './MainButton';
 
 const { Option } = Select;
 
@@ -80,20 +81,17 @@ const AddAccountButton = ({ onAccountAdded }) => {
 
   return (
     <>
-      <Button 
-        type="primary" 
+      <MainButton 
         icon={<PlusOutlined />} 
         onClick={() => setIsOpen(true)}
       >
         Add
-      </Button>
+      </MainButton>
       
       <ModalBottomSheet
         open={isOpen}
         onDismiss={handleDismiss}
         title="Select Institution"
-        blocking={false}
-        scrollLocking={false}
       >
         <Select
           style={{ width: '100%', marginBottom: '16px' }}
