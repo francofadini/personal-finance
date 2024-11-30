@@ -12,8 +12,6 @@ const StyledList = styled(List)`
     padding: 0;
     border: none;
   }
-  
-  margin: 0;
 `;
 
 const DateGroup = styled.div`
@@ -22,9 +20,9 @@ const DateGroup = styled.div`
 `;
 
 const DateHeader = styled.div`
-  padding: 8px 16px;
+  padding: 16px;
   position: sticky;
-  top: 56px;
+  top: 86px;
   z-index: 5;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.65);
