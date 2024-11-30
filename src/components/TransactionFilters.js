@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { DatePicker, Select, Button } from 'antd';
+import { DatePicker, Select, Button, Row, Col } from 'antd';
 import styled from 'styled-components';
 import ModalBottomSheet from './ModalBottomSheet';
-
-const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 const FilterContainer = styled.div`
   display: flex;
@@ -12,29 +9,54 @@ const FilterContainer = styled.div`
   gap: 16px;
 `;
 
-const ApplyButton = styled(Button)`
-  margin-top: 16px;
+const DateContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  
+  .ant-picker {
+    flex: 1;
+    height: 44px;
+  }
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
 `;
 
 const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
-  const [selectedDates, setSelectedDates] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const handleApply = () => {
-    onApply({ dates: selectedDates, category: selectedCategory });
+    onApply({ 
+      dates: [startDate, endDate].filter(Boolean), 
+      category: selectedCategory 
+    });
+    onClose();
+  };
+
+  const handleClear = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedCategory(null);
+    onApply({ dates: null, category: null });
     onClose();
   };
 
   return (
     <ModalBottomSheet title="Filter Transactions" open={visible} onDismiss={onClose}>
       <FilterContainer>
-        <RangePicker
-          style={{ width: '100%' }}
-          onChange={setSelectedDates}
-          value={selectedDates}
-        />
+        <DateContainer>
+          <DatePicker placeholder="Start date" value={startDate} onChange={setStartDate} />
+          <DatePicker placeholder="End date" value={endDate} onChange={setEndDate} />
+        </DateContainer>
+
         <Select
-          style={{ width: '100%' }}
+          style={{ width: '100%', height: '44px' }}
           placeholder="Select a category"
           onChange={setSelectedCategory}
           value={selectedCategory}
@@ -46,9 +68,15 @@ const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
             </Option>
           ))}
         </Select>
-        <ApplyButton type="primary" onClick={handleApply}>
-          Apply Filters
-        </ApplyButton>
+
+        <ButtonRow>
+          <Button style={{ flex: 1, height: '44px' }} onClick={handleClear}>
+            Clear
+          </Button>
+          <Button style={{ flex: 3, height: '44px' }} type="primary" onClick={handleApply}>
+            Apply Filters
+          </Button>
+        </ButtonRow>
       </FilterContainer>
     </ModalBottomSheet>
   );

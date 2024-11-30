@@ -4,7 +4,7 @@ import { List, Typography, Skeleton, theme } from 'antd';
 import TransactionListItem from './TransactionListItem';
 
 const ListContainer = styled.div`
-  padding: 56px 0;
+  padding-bottom: 56px;
 `;
 
 const StyledList = styled(List)`
@@ -12,6 +12,8 @@ const StyledList = styled(List)`
     padding: 0;
     border: none;
   }
+  
+  margin: 0;
 `;
 
 const DateGroup = styled.div`
@@ -20,9 +22,9 @@ const DateGroup = styled.div`
 `;
 
 const DateHeader = styled.div`
-  padding: 16px;
+  padding: 8px 16px;
   position: sticky;
-  top: 86px;
+  top: 56px;
   z-index: 5;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.65);

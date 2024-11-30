@@ -15,14 +15,14 @@ const Backdrop = styled.div`
 
 const Sheet = styled.div`
   position: fixed;
-  bottom: ${props => props.$isVisible ? 0 : '-100%'};
+  bottom: ${props => props.$isVisible ? '56px' : '-100%'};
   left: 0;
   right: 0;
   background: white;
   border-radius: 16px 16px 0 0;
   z-index: 1001;
   padding: 16px;
-  max-height: 80vh;
+  max-height: calc(80vh - 56px);
   overflow-y: auto;
   transition: bottom 0.3s ease;
 
