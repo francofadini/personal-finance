@@ -1,21 +1,20 @@
 import React, { useEffect } from 'react';
-import { Layout as AntLayout, Spin } from 'antd';
+import { Layout as AntLayout, Spin, theme } from 'antd';
 import styled from 'styled-components';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import BottomNavigation from './BottomNavigation';
 
-const { Content } = AntLayout;
-
 const StyledLayout = styled(AntLayout)`
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background: ${({ $token }) => $token.colorBgLayout};
 `;
 
-const StyledContent = styled(Content)`
+const StyledContent = styled(AntLayout.Content)`
   flex: 1;
-  padding-bottom: 70px; // Add padding to account for the TabBar height
+  margin-bottom: 56px; // Height of bottom nav
+  position: relative;
+  z-index: 10; // Between header and bottom nav
 `;
 
 const StyledSpinContainer = styled.div`
@@ -28,6 +27,7 @@ const StyledSpinContainer = styled.div`
 const Layout = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { token } = theme.useToken();
 
   useEffect(() => {
     if (status === 'unauthenticated' && !isPublicRoute(router.pathname)) {
@@ -53,9 +53,11 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <StyledLayout>
-      <StyledContent>{children}</StyledContent>
-      {session && <BottomNavigation onSignOut={handleSignOut} />}
+    <StyledLayout $token={token}>
+      <StyledContent>
+        {children}
+      </StyledContent>
+      <BottomNavigation style={{ zIndex: 15 }} onSignOut={handleSignOut} />
     </StyledLayout>
   );
 };

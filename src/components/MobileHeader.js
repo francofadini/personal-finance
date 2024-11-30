@@ -8,9 +8,10 @@ const { Title } = Typography;
 const HeaderContainer = styled.div`
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 19;
   padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid ${({ $token }) => $token.colorBorderSecondary};
+  background: ${({ $token }) => $token.colorBgContainer};
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -54,8 +55,10 @@ const BackButton = styled(Button)`
 `;
 
 const MobileHeader = ({ title, onBack, action }) => {
+  const { token } = theme.useToken();
+  
   return (
-    <HeaderContainer>
+    <HeaderContainer $token={token}>
       <TopRow>
         {onBack && (
           <BackButtonWrapper>

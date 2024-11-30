@@ -1,148 +1,93 @@
-import { useState, useEffect } from 'react';
-import { Table, Card, DatePicker, Select, Space, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { message } from 'antd';
 import styled from 'styled-components';
 import Layout from '@/components/Layout';
-import { useRouter } from 'next/router';
+import MobileHeader from '@/components/MobileHeader';
+import TransactionList from '@/components/TransactionList';
+import TransactionFilters from '@/components/TransactionFilters';
+import MainButton from '@/components/MainButton';
+import { FilterOutlined } from '@ant-design/icons';
 
-const { RangePicker } = DatePicker;
-
-const FiltersCard = styled(Card)`
-  margin-bottom: 16px;
+const FiltersButton = styled(MainButton)`
+  margin-left: auto;
 `;
 
 const TransactionsPage = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 50,
-    total: 0
-  });
-  const [filters, setFilters] = useState({
-    dateRange: null,
-    accountId: null,
-    categoryId: null
-  });
-  const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    dates: null,
+    category: null
+  });
 
   useEffect(() => {
-    loadData();
-    loadCategories();
-  }, [filters, pagination.current]);
+    fetchTransactions();
+    fetchCategories();
+  }, [filters]);
 
-  const loadData = async () => {
+  const fetchTransactions = async () => {
     try {
-      setLoading(true);
-      const queryParams = new URLSearchParams({
-        page: pagination.current,
-        limit: pagination.pageSize,
-        ...(filters.accountId && { accountId: filters.accountId }),
-        ...(filters.categoryId && { categoryId: filters.categoryId }),
-        ...(filters.dateRange?.[0] && { startDate: filters.dateRange[0].toISOString() }),
-        ...(filters.dateRange?.[1] && { endDate: filters.dateRange[1].toISOString() })
-      });
+      const params = new URLSearchParams();
+      if (filters.dates) {
+        params.append('startDate', filters.dates[0].toISOString());
+        params.append('endDate', filters.dates[1].toISOString());
+      }
+      if (filters.category) {
+        params.append('categoryId', filters.category);
+      }
 
-      const response = await fetch(`/api/transactions?${queryParams}`);
+      const response = await fetch(`/api/transactions?${params}`);
       if (!response.ok) throw new Error('Failed to fetch transactions');
-      
       const data = await response.json();
-      console.log('data', data);
       setTransactions(data.transactions);
-      setPagination(prev => ({
-        ...prev,
-        total: data.pagination.total
-      }));
     } catch (error) {
-      message.error('Error loading transactions');
+      message.error('Failed to load transactions');
     } finally {
       setLoading(false);
     }
   };
 
-  const loadCategories = async () => {
-    const response = await fetch('/api/categories');
-    if (!response.ok) throw new Error('Failed to fetch categories');
-    const data = await response.json();
-    console.log('data', data);
-    setCategories(data);
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      message.error('Failed to load categories');
+    }
   };
 
-  const columns = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      render: (date) => new Date(date).toLocaleDateString()
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description'
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      render: (amount, record) => `${amount} ${record.currency}`
-    },
-    {
-      title: 'Category',
-      dataIndex: 'categoryId',
-      render: (categoryId, record) => {
-        const category = categories.find(c => c._id === categoryId);
-        return (
-        <Space>
-          <span style={{ color: category ? category.color : 'inherit' }}>
-            {category ? category.icon : ''}
-          </span>
-          {category ? category.name : 'Uncategorized'}
-          </Space>
-        );
-      }
-    },
-    {
-      title: 'Account',
-      dataIndex: ['accountId', 'name']
-    }
-  ];
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
 
   return (
     <Layout>
-      <FiltersCard>
-        <Space>
-          <RangePicker 
-            value={filters.dateRange}
-            onChange={(dates) => setFilters(prev => ({ ...prev, dateRange: dates }))}
-          />
-          <Select
-            placeholder="Select account"
-            allowClear
-            value={filters.accountId}
-            onChange={(value) => setFilters(prev => ({ ...prev, accountId: value }))}
-            options={accounts.map(acc => ({ 
-              label: acc.name, 
-              value: acc._id 
-            }))}
-          />
-          <Select
-            placeholder="Select category"
-            allowClear
-            value={filters.categoryId}
-            onChange={(value) => setFilters(prev => ({ ...prev, categoryId: value }))}
-            options={categories.map(cat => ({ 
-              label: cat.name, 
-              value: cat._id 
-            }))}
-          />
-        </Space>
-      </FiltersCard>
-
-      <Table
-        columns={columns}
-        dataSource={transactions}
-        rowKey="_id"
-        pagination={pagination}
-        onChange={(pagination) => setPagination(pagination)}
+      <MobileHeader
+        title="Transactions"
+        action={
+          <FiltersButton
+            icon={<FilterOutlined />}
+            onClick={() => setShowFilters(true)}
+          >
+            Filter
+          </FiltersButton>
+        }
+      />
+      
+      <TransactionList 
+        transactions={transactions}
         loading={loading}
+      />
+
+      <TransactionFilters
+        visible={showFilters}
+        onClose={() => setShowFilters(false)}
+        onApply={handleApplyFilters}
+        categories={categories}
       />
     </Layout>
   );
