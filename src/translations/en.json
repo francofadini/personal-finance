@@ -8,7 +8,41 @@
       "deleteSuccess": "Account deleted successfully",
       "deleteError": "Error deleting account"
     },
+    "recurrentExpenses": {
+      "title": "Recurrent Expenses",
+      "new": "New Recurrent Expense",
+      "edit": "Edit Recurrent Expense",
+      "empty": "No recurrent expenses yet",
+      "form": {
+        "name": "Name",
+        "amount": "Estimated Amount",
+        "category": "Category",
+        "day": "Day of Month",
+        "frequency": "Frequency",
+        "keywords": "Keywords"
+      },
+      "frequency": {
+        "monthly": "Monthly",
+        "bimonthly": "Bimonthly",
+        "quarterly": "Quarterly",
+        "semiannual": "Semi-annual",
+        "annual": "Annual",
+        "custom": "Custom"
+      },
+      "messages": {
+        "createSuccess": "Recurrent expense created",
+        "updateSuccess": "Recurrent expense updated",
+        "deleteSuccess": "Recurrent expense deleted",
+        "error": "An error occurred"
+      },
+      "deleteConfirm": {
+        "title": "Delete Recurrent Expense",
+        "content": "Are you sure you want to delete this recurrent expense? This action cannot be undone."
+      }
+    },
     "common": {
+      "save": "Save",
+      "create": "Create",
       "delete": "Delete",
       "cancel": "Cancel"
     }

@@ -8,7 +8,36 @@
       "deleteSuccess": "Cuenta eliminada con éxito",
       "deleteError": "Error al eliminar la cuenta"
     },
+    "recurrentExpenses": {
+      "title": "Gastos Recurrentes",
+      "new": "Nuevo Gasto Recurrente",
+      "edit": "Editar Gasto Recurrente",
+      "empty": "No hay gastos recurrentes",
+      "form": {
+        "name": "Nombre",
+        "amount": "Cantidad Estimada",
+        "category": "Categoría",
+        "day": "Día del Mes",
+        "frequency": "Frecuencia",
+        "keywords": "Palabras Clave"
+      },
+      "frequency": {
+        "monthly": "Mensual",
+        "bimonthly": "Bimestral",
+        "quarterly": "Trimestral",
+        "semiannual": "Semestral",
+        "annual": "Anual",
+        "custom": "Personalizado"
+      },
+      "messages": {
+        "createSuccess": "Gasto recurrente creado",
+        "updateSuccess": "Gasto recurrente actualizado",
+        "deleteSuccess": "Gasto recurrente eliminado",
+        "error": "Ha ocurrido un error"
+      }
+    },
     "common": {
+      "create": "Crear",
       "delete": "Eliminar",
       "cancel": "Cancelar"
     }

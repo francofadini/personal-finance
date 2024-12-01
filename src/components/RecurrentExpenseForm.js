@@ -1,74 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Select, Modal, Space, Tag, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Select, InputNumber, Space, Button } from 'antd';
 import styled from 'styled-components';
 import { FREQUENCY_PRESETS } from '@/services/recurrentExpenseService';
+import { useTranslation } from 'react-i18next';
 
 const StyledForm = styled(Form)`
-  .ant-form-item { margin-bottom: 16px; }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
-const MonthsSelect = styled(Select)`
-  .month-tag {
-    margin: 2px;
-    padding: 0 4px;
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+
+  .ant-btn {
+    flex: 1;
+    height: 44px;
   }
 `;
 
-const MONTHS = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' }
-];
-
 const RecurrentExpenseForm = ({ 
-  visible, 
   onCancel, 
   onSubmit, 
   initialValues = null,
   loading,
-  categories = [] // We'll need to fetch this
+  categories = []
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [selectedPreset, setSelectedPreset] = useState(null);
+  
+  // Helper function to compare arrays
+  const compareArrays = (a = [], b = []) => {
+    if (a.length !== b.length) return false;
+    const sortedA = [...a].sort((x, y) => x - y);
+    const sortedB = [...b].sort((x, y) => x - y);
+    return sortedA.every((val, idx) => val === sortedB[idx]);
+  };
+
+  const [selectedPreset, setSelectedPreset] = useState(() => {
+    if (initialValues?.months) {
+      // Determine preset based on months pattern
+      const months = initialValues.months;
+      const preset = Object.entries(FREQUENCY_PRESETS).find(([_, p]) => 
+        compareArrays(p.months, months)
+      );
+      return preset ? preset[0] : 'CUSTOM';
+    }
+    return 'MONTHLY';
+  });
 
   useEffect(() => {
-    if (visible) {
-      if (initialValues) {
-        form.setFieldsValue({
-          name: initialValues.name,
-          estimatedAmount: initialValues.estimatedAmount,
-          categoryId: initialValues.categoryId._id,
-          keywords: initialValues.keywords,
-          months: initialValues.months,
-          dayOfMonth: initialValues.dayOfMonth
-        });
-        // Try to detect preset
-        const preset = Object.entries(FREQUENCY_PRESETS).find(
-          ([_, p]) => p.months.length === initialValues.months.length && 
-                      p.months.every(m => initialValues.months.includes(m))
-        );
-        setSelectedPreset(preset ? preset[0] : 'CUSTOM');
-      } else {
-        form.setFieldsValue({
-          name: '',
-          estimatedAmount: 0,
-          keywords: [],
-          months: FREQUENCY_PRESETS.MONTHLY.months,
-          dayOfMonth: 1
-        });
-        setSelectedPreset('MONTHLY');
-      }
+    if (!initialValues) {
+      // New expense defaults
+      form.setFieldsValue({
+        months: FREQUENCY_PRESETS.MONTHLY.months,
+        dayOfMonth: new Date().getDate()
+      });
+    } else {
+      // Editing existing expense
+      form.setFieldsValue({
+        ...initialValues,
+        categoryId: initialValues.categoryId._id
+      });
     }
-  }, [visible, initialValues, form]);
+  }, [initialValues]);
 
   const handlePresetChange = (preset) => {
     setSelectedPreset(preset);
@@ -83,123 +80,113 @@ const RecurrentExpenseForm = ({
       await onSubmit(values);
       form.resetFields();
     } catch (error) {
-      message.error('Failed to save recurrent expense. Please try again.');
+      // Form validation will handle the error display
     }
   };
 
   return (
-    <Modal
-      title={initialValues ? "Edit Recurrent Expense" : "New Recurrent Expense"}
-      open={visible}
-      onCancel={() => {
-        form.resetFields();
-        onCancel();
+    <StyledForm
+      form={form}
+      layout="vertical"
+      initialValues={{
+        ...initialValues,
+        preset: initialValues?.preset || 'MONTHLY'
       }}
-      onOk={handleSubmit}
-      confirmLoading={loading}
-      width={600}
     >
-      <StyledForm form={form} layout="vertical">
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true, message: 'Please input expense name!' }]}
-        >
-          <Input />
-        </Form.Item>
+      <Form.Item
+        name="name"
+        label={t('recurrentExpenses.form.name')}
+        rules={[{ required: true, message: t('form.required') }]}
+      >
+        <Input />
+      </Form.Item>
 
-        <Form.Item
-          name="estimatedAmount"
-          label="Estimated Amount"
-          rules={[{ required: true, type: 'number', min: 0 }]}
-        >
-          <InputNumber 
+      <Form.Item
+        name="estimatedAmount"
+        label={t('recurrentExpenses.form.amount')}
+        rules={[{ required: true, type: 'number', min: 0 }]}
+      >
+        <InputNumber 
+          style={{ width: '100%' }}
+          formatter={value => `${value}€`}
+          parser={value => value.replace('€', '')}
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="categoryId"
+        label={t('recurrentExpenses.form.category')}
+        rules={[{ required: true }]}
+      >
+        <Select>
+          {categories.map(category => (
+            <Select.Option key={category._id} value={category._id}>
+              <Space>
+                <span style={{ color: category.color }}>{category.icon}</span>
+                {category.name}
+              </Space>
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="dayOfMonth"
+        label={t('recurrentExpenses.form.day')}
+        rules={[{ required: true, type: 'number', min: 1, max: 31 }]}
+      >
+        <InputNumber style={{ width: '100%' }} min={1} max={31} />
+      </Form.Item>
+
+      <Form.Item label={t('recurrentExpenses.form.frequency')}>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Select
+            value={selectedPreset}
+            onChange={handlePresetChange}
             style={{ width: '100%' }}
-            formatter={value => `${value}€`}
-            parser={value => value.replace('€', '')}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="categoryId"
-          label="Category"
-          rules={[{ required: true, message: 'Please select a category!' }]}
-        >
-          <Select>
-            {categories.map(category => (
-              <Select.Option key={category._id} value={category._id}>
-                <Space>
-                  <span style={{ color: category.color }}>{category.icon}</span>
-                  {category.fullName}
-                </Space>
+          >
+            {Object.entries(FREQUENCY_PRESETS).map(([key, preset]) => (
+              <Select.Option key={key} value={key}>
+                {t(`recurrentExpenses.frequency.${key.toLowerCase()}`)}
               </Select.Option>
             ))}
+            <Select.Option value="CUSTOM">{t('recurrentExpenses.frequency.custom')}</Select.Option>
           </Select>
-        </Form.Item>
 
-        <Form.Item name="keywords" label="Keywords">
-          <Select
-            mode="tags"
-            style={{ width: '100%' }}
-            placeholder="Type and press enter to add keywords"
-            tokenSeparators={[',']}
-          />
-        </Form.Item>
-
-        <Form.Item label="Frequency">
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Form.Item
+            name="months"
+            noStyle
+            rules={[{ required: true }]}
+          >
             <Select
-              value={selectedPreset}
-              onChange={handlePresetChange}
+              mode="multiple"
               style={{ width: '100%' }}
+              placeholder={t('recurrentExpenses.form.selectMonths')}
+              disabled={selectedPreset !== 'CUSTOM'}
             >
-              {Object.entries(FREQUENCY_PRESETS).map(([key, preset]) => (
-                <Select.Option key={key} value={key}>
-                  {preset.label}
+              {Array.from({ length: 12 }, (_, i) => (
+                <Select.Option key={i + 1} value={i + 1}>
+                  {new Date(0, i).toLocaleString('default', { month: 'long' })}
                 </Select.Option>
               ))}
-              <Select.Option value="CUSTOM">Custom</Select.Option>
             </Select>
+          </Form.Item>
+        </Space>
+      </Form.Item>
 
-            <Form.Item
-              name="months"
-              noStyle
-              rules={[{ 
-                required: true,
-                message: 'Please select at least one month!' 
-              }]}
-            >
-              <MonthsSelect
-                mode="multiple"
-                style={{ width: '100%' }}
-                placeholder="Select months"
-                disabled={selectedPreset !== 'CUSTOM'}
-              >
-                {MONTHS.map(month => (
-                  <Select.Option key={month.value} value={month.value}>
-                    {month.label}
-                  </Select.Option>
-                ))}
-              </MonthsSelect>
-            </Form.Item>
-          </Space>
-        </Form.Item>
-
-        <Form.Item
-          name="dayOfMonth"
-          label="Day of Month"
-          rules={[{ 
-            required: true,
-            type: 'number',
-            min: 1,
-            max: 31,
-            message: 'Please enter a valid day (1-31)!'
-          }]}
+      <ButtonRow>
+        <Button onClick={onCancel}>
+          {t('common.cancel')}
+        </Button>
+        <Button 
+          type="primary" 
+          onClick={handleSubmit}
+          loading={loading}
         >
-          <InputNumber style={{ width: '100%' }} />
-        </Form.Item>
-      </StyledForm>
-    </Modal>
+          {initialValues ? t('common.save') : t('common.create')}
+        </Button>
+      </ButtonRow>
+    </StyledForm>
   );
 };
 
