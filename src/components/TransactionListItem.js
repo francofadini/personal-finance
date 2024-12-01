@@ -78,7 +78,7 @@ const TransactionListItem = ({ transaction }) => {
         </IconCircle>
         <TextSection>
           <Title>{transaction.description}</Title>
-          <Category>{transaction.category?.name || 'Uncategorized'}</Category>
+          <Category>{transaction.categoryId?.name || 'Uncategorized'}</Category>
         </TextSection>
       </InfoSection>
       <Amount $isNegative={isNegative}>

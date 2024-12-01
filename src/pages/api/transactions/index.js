@@ -48,7 +48,11 @@ async function handleGetTransactions(req, res, userId) {
   const skip = (page - 1) * limit;
 
   const [transactions, total] = await Promise.all([
-    Transaction.find(query).skip(skip).limit(limit).exec(),
+    Transaction.find(query)
+      .populate('categoryId', 'name color icon')
+      .skip(skip)
+      .limit(limit)
+      .exec(),
     Transaction.countDocuments(query).exec()
   ]);
 
