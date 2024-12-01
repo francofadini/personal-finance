@@ -40,10 +40,18 @@
         "content": "Are you sure you want to delete this recurrent expense? This action cannot be undone."
       }
     },
+    "nav": {
+      "transactions": "Transactions",
+      "categories": "Categories",
+      "accounts": "Accounts",
+      "more": "More",
+      "recurrentExpenses": "Recurrent Expenses"
+    },
     "common": {
       "save": "Save",
       "create": "Create",
       "delete": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "logout": "Logout"
     }
   }

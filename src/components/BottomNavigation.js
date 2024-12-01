@@ -1,96 +1,141 @@
 import React from 'react';
-import { useRouter } from 'next/router';
+import { Tabs, theme } from 'antd';
 import styled from 'styled-components';
-import { WalletOutlined, TagsOutlined, LogoutOutlined, TransactionOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
+import { useRouter } from 'next/router';
+import { 
+  BankOutlined,
+  BookOutlined,
+  FolderOutlined,
+  MoreOutlined 
+} from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
-const NavBar = styled.nav`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background-color: ${({ $token }) => $token.colorBgContainer};
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
-  z-index: 50;
-  border-top: 1px solid ${({ $token }) => $token.colorBorderSecondary};
-`;
+const TabLabel = styled.div`
+  position: relative;
+  height: 48px;
+  width: 56px;
 
-const NavItem = styled.a`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: ${props => props.active ? '#1890ff' : '#8c8c8c'};
-  font-size: 12px;
-  text-decoration: none;
+  .anticon {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+  }
 
-  &:hover {
-    color: #1890ff;
+  div {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    line-height: 1.2;
   }
 `;
 
-const IconWrapper = styled.span`
-  font-size: 24px;
-  margin-bottom: 4px;
+const NavContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #f0f0f0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+
+  .ant-tabs {
+    .ant-tabs-nav {
+      margin: 0;
+      &::before {
+        display: none;
+      }
+    }
+
+    .ant-tabs-nav-list {
+      width: 100%;
+      justify-content: space-around;
+    }
+
+    .ant-tabs-tab {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      .ant-tabs-tab-btn {
+        color: rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    .ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: ${props => props.$token?.colorPrimary || '#1677ff'};
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+  }
 `;
 
-const BottomNavigation = ({ onSignOut }) => {
+const BottomNavigation = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const handleNavigation = (path) => {
-    if (path === 'signout') {
-      onSignOut();
-    } else {
-      router.push(path);
+  const items = [
+    {
+      key: '/accounts',
+      label: (
+        <TabLabel>
+          <BankOutlined />
+          <div>{t('nav.accounts')}</div>
+        </TabLabel>
+      )
+    },
+    {
+      key: '/transactions',
+      label: (
+        <TabLabel>
+          <BookOutlined />
+          <div>{t('nav.transactions')}</div>
+        </TabLabel>
+      )
+    },
+    {
+      key: '/categories',
+      label: (
+        <TabLabel>
+          <FolderOutlined />
+          <div>{t('nav.categories')}</div>
+        </TabLabel>
+      )
+    },
+    {
+      key: '/more',
+      label: (
+        <TabLabel>
+          <MoreOutlined />
+          <div>{t('nav.more')}</div>
+        </TabLabel>
+      )
     }
+  ];
+
+  const handleChange = (key) => {
+    router.push(key);
   };
 
   return (
-    <NavBar $token={token}>
-      <NavItem 
-        href="/" 
-        onClick={(e) => { e.preventDefault(); handleNavigation('/'); }}
-        active={router.pathname === '/'}
-      >
-        <IconWrapper><WalletOutlined /></IconWrapper>
-        Cuentas
-      </NavItem>
-      <NavItem 
-        href="/transactions" 
-        onClick={(e) => { e.preventDefault(); handleNavigation('/transactions'); }}
-        active={router.pathname === '/transactions'}
-      >
-        <IconWrapper><TransactionOutlined /></IconWrapper>
-        Transacciones
-      </NavItem>
-      <NavItem 
-        href="/categories" 
-        onClick={(e) => { e.preventDefault(); handleNavigation('/categories'); }}
-        active={router.pathname === '/categories'}
-      >
-        <IconWrapper><TagsOutlined /></IconWrapper>
-        Categorías
-      </NavItem>
-      <NavItem 
-        href="/recurrent-expenses" 
-        onClick={(e) => { e.preventDefault(); handleNavigation('/recurrent-expenses'); }}
-        active={router.pathname === '/recurrent-expenses'}
-      >
-        <IconWrapper><WalletOutlined /></IconWrapper>
-        Gastos recurrentes
-      </NavItem>
-      <NavItem 
-        href="#" 
-        onClick={(e) => { e.preventDefault(); handleNavigation('signout'); }}
-      >
-        <IconWrapper><LogoutOutlined /></IconWrapper>
-        Salir
-      </NavItem>
-    </NavBar>
+    <NavContainer $token={token}>
+      <Tabs
+        activeKey={router.pathname}
+        onChange={handleChange}
+        items={items}
+        centered
+      />
+    </NavContainer>
   );
 };
 
