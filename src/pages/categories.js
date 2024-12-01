@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, message, ButtonGroup } from 'antd';
+import { PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Layout from '@/components/Layout';
 import MobileHeader from '@/components/MobileHeader';
@@ -8,6 +8,8 @@ import CategoryListItem from '@/components/CategoryListItem';
 import CategoryForm from '@/components/CategoryForm';
 import ModalBottomSheet from '@/components/ModalBottomSheet';
 import { categoryService } from '@/services/categoryService';
+import { useTranslation } from 'react-i18next';
+import MainButton from '@/components/MainButton';
 
 const Container = styled.div`
   padding: 8px;
@@ -18,12 +20,20 @@ const SubcategoryList = styled.div`
   margin-top: 8px;
 `;
 
+const ActionButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const CategoriesPage = () => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [parentCategory, setParentCategory] = useState(null);
+  const [applying, setApplying] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -78,16 +88,26 @@ const CategoriesPage = () => {
     }
   };
 
-  const handleApplyRules = async (categoryId) => {
+  const handleApplyAllRules = async () => {
     try {
-      const response = await fetch(`/api/categories/${categoryId}/apply-rules`, {
+      setApplying(true);
+      const response = await fetch('/api/categories/apply-all-rules', {
         method: 'POST'
       });
+      
       if (!response.ok) throw new Error('Failed to apply rules');
-      const result = await response.json();
-      message.success(`Categorized ${result.categorized} transactions`);
+      
+      const data = await response.json();
+      const categorized = data.results.reduce((sum, r) => sum + (r.categorized || 0), 0);
+      
+      message.success(t('categories.applyRules.success', { 
+        count: categorized, 
+        total: data.total 
+      }));
     } catch (error) {
-      message.error('Error applying category rules');
+      message.error(t('common.error'));
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -107,7 +127,7 @@ const CategoriesPage = () => {
             setParentCategory(category);
             setFormVisible(true);
           }}
-          onApplyRules={handleApplyRules}
+          onApplyRules={handleApplyAllRules}
         />
         {subcategories.length > 0 && (
           <SubcategoryList>
@@ -120,16 +140,23 @@ const CategoriesPage = () => {
 
   return (
     <Layout>
-      <MobileHeader
-        title="Categories"
+      <MobileHeader 
+        title={t('categories.title')}
         action={
-          <Button 
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setFormVisible(true)}
-          >
-            Add
-          </Button>
+          <ActionButtons>
+            <Button
+              type="text"
+              icon={<ThunderboltOutlined />}
+              onClick={handleApplyAllRules}
+              loading={applying}
+            />
+            <MainButton
+              icon={<PlusOutlined />} 
+              onClick={() => setFormVisible(true)}
+            >
+              Add
+            </MainButton>
+          </ActionButtons>
         }
       />
       
