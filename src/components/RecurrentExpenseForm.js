@@ -110,6 +110,8 @@ const RecurrentExpenseForm = ({
           style={{ width: '100%' }}
           formatter={value => `${value}€`}
           parser={value => value.replace('€', '')}
+          inputMode="decimal"
+          keyboard={false}
         />
       </Form.Item>
 
@@ -135,7 +137,13 @@ const RecurrentExpenseForm = ({
         label={t('recurrentExpenses.form.day')}
         rules={[{ required: true, type: 'number', min: 1, max: 31 }]}
       >
-        <InputNumber style={{ width: '100%' }} min={1} max={31} />
+        <InputNumber 
+          style={{ width: '100%' }} 
+          min={1} 
+          max={31}
+          inputMode="numeric"
+          keyboard={false}
+        />
       </Form.Item>
 
       <Form.Item label={t('recurrentExpenses.form.frequency')}>

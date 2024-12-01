@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 const ExpenseCell = styled.div`
   margin: 0 8px 8px;
-  padding: 16px;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,57 +19,28 @@ const ExpenseCell = styled.div`
 
 const InfoSection = styled.div`
   flex: 1;
-  display: flex;
-  gap: 12px;
-  align-items: center;
   min-width: 0;
-`;
-
-const IconCircle = styled.div`
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: ${props => props.$color || '#f5f5f5'};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
 `;
 
 const TextSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
 `;
 
 const Title = styled.div`
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const Subtitle = styled.div`
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   gap: 8px;
-`;
-
-const Amount = styled.div`
-  font-size: 15px;
-  font-weight: 600;
-  color: #52c41a;
-  text-align: right;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
 `;
 
 const MonthTags = styled.div`
@@ -87,10 +58,23 @@ const DayInfo = styled.span`
 `;
 
 const MonthTag = styled(Tag)`
-  background: ${({ $token }) => $token.colorPrimaryBg};
-  color: ${({ $token }) => $token.colorPrimary};
-  border: none;
-  margin: 0;
+  && {
+    background: ${({ $token }) => $token?.colorInfoBg};
+    color: ${({ $token }) => $token?.colorInfo};
+    border: none;
+    margin: 0;
+  }
+`;
+
+const Amount = styled.div`
+  font-size: 15px;
+  font-weight: 600;
+  text-align: right;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 4px;
 `;
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -98,7 +82,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const RecurrentExpenseListItem = ({ expense, onEdit, onDelete }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { name, estimatedAmount, categoryId, months, dayOfMonth } = expense;
+  const { name, estimatedAmount, months, dayOfMonth } = expense;
   
   const handleDelete = () => {
     Modal.confirm({
@@ -107,21 +91,18 @@ const RecurrentExpenseListItem = ({ expense, onEdit, onDelete }) => {
       okText: t('common.delete'),
       cancelText: t('common.cancel'),
       okButtonProps: { danger: true },
-      onOk: () => onDelete(expense._id)
+      onOk: () => onDelete()
     });
   };
 
   return (
     <ExpenseCell>
       <InfoSection>
-        <IconCircle $color={categoryId.color}>
-          {categoryId.icon}
-        </IconCircle>
         <TextSection>
           <Title>{name}</Title>
           <Subtitle>
             {months.length === 12 ? (
-              <span>Every month</span>
+              <MonthTag>Every month</MonthTag>
             ) : (
               <MonthTags>
                 {months.sort((a, b) => a - b).map(m => (
@@ -139,12 +120,12 @@ const RecurrentExpenseListItem = ({ expense, onEdit, onDelete }) => {
       </InfoSection>
       
       <Space direction="vertical" align="end">
-        <Amount>{formatCurrency(estimatedAmount)}</Amount>
+        <Amount $token={token}>-{formatCurrency(estimatedAmount)}</Amount>
         <ActionButtons>
           <Button 
             type="text" 
             icon={<EditOutlined />} 
-            onClick={() => onEdit(expense)}
+            onClick={() => onEdit()}
           />
           <Button 
             type="text" 
