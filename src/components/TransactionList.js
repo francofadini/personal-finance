@@ -22,7 +22,7 @@ const DateGroup = styled.div`
 const DateHeader = styled.div`
   padding: 16px;
   position: sticky;
-  top: 86px;
+  top: 148px;
   z-index: 5;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.65);

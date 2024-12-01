@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { message } from 'antd';
+import { message, Input, theme } from 'antd';
 import styled from 'styled-components';
 import Layout from '@/components/Layout';
 import MobileHeader from '@/components/MobileHeader';
 import TransactionList from '@/components/TransactionList';
 import TransactionFilters from '@/components/TransactionFilters';
 import MainButton from '@/components/MainButton';
-import { FilterOutlined } from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 
 const FiltersButton = styled(MainButton)`
   margin-left: auto;
 `;
 
 const TransactionsPage = () => {
+  const { token } = theme.useToken();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState({
     dates: null,
     category: null
@@ -64,6 +66,10 @@ const TransactionsPage = () => {
     setFilters(newFilters);
   };
 
+  const filteredTransactions = transactions.filter(transaction => 
+    transaction.description?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <Layout>
       <MobileHeader
@@ -76,10 +82,18 @@ const TransactionsPage = () => {
             Filter
           </FiltersButton>
         }
+        showSearch
+        searchProps={{
+          placeholder: "Search transactions...",
+          prefix: <SearchOutlined />,
+          onChange: (e) => setSearchText(e.target.value),
+          value: searchText,
+          allowClear: true
+        }}
       />
-      
+
       <TransactionList 
-        transactions={transactions}
+        transactions={filteredTransactions}
         loading={loading}
       />
 
