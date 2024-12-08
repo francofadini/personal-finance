@@ -1,4 +1,4 @@
-import { Transaction } from '@/backend/models/Transaction';
+import Transaction from '@/backend/models/Transaction';
 
 export const applySubcategoryRulesUseCase = async ({ subcategory }) => {
   try {

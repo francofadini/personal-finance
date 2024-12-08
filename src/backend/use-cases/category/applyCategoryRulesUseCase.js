@@ -23,15 +23,23 @@ export const applyCategoryRulesUseCase = async (category) => {
             subcategoryId: subcategory._id,
             name: subcategory.name,
             status: 'error',
-            error: error.message
+            error: error.message,
+            total: 0,
+            categorized: 0
           };
         }
       })
     );
 
+    // Sum up totals and categorized from all subcategories
+    const totals = results.reduce((acc, r) => ({
+      total: acc.total + (r.total || 0),
+      categorized: acc.categorized + (r.categorized || 0)
+    }), { total: 0, categorized: 0 });
+
     return {
-      total: results.length,
-      categorized: results.reduce((sum, r) => sum + (r.categorized || 0), 0),
+      total: totals.total,
+      categorized: totals.categorized,
       errors: results.filter(r => r.status === 'error').length,
       details: results
     };

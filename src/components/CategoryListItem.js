@@ -84,6 +84,7 @@ const CategoryListItem = ({
   onApplyRules 
 }) => {
   const isSubcategory = !!category.categoryId;
+  const [applying, setApplying] = useState(false);
 
   return (
     <CategoryContainer>
@@ -105,10 +106,21 @@ const CategoryListItem = ({
             onClick={() => onEdit(category)} 
           />
           {!isSubcategory && (
-            <Button 
-              icon={<PlusCircleOutlined />} 
-              onClick={() => onAddSub(category)} 
-            />
+            <>
+              <Button 
+                icon={<PlusCircleOutlined />} 
+                onClick={() => onAddSub(category)} 
+              />
+              <Button
+                icon={<ThunderboltOutlined />}
+                loading={applying}
+                onClick={async () => {
+                  setApplying(true);
+                  await onApplyRules(category);
+                  setApplying(false);
+                }}
+              />
+            </>
           )}
           <Button 
             icon={<DeleteOutlined />} 

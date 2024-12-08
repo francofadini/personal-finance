@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
-import { Category } from '@/backend/models/Category';
+import { getCategoriesWithBudgetUseCase } from '@/backend/use-cases/category/getCategoriesWithBudgetUseCase';
 import { createCategoryUseCase } from '@/backend/use-cases/category/createCategoryUseCase';
 
 export default async function handler(req, res) {
@@ -15,15 +15,10 @@ export default async function handler(req, res) {
 
     switch (req.method) {
       case 'GET':
-        try {
-          const categories = await Category.find({ 
-            userId: session.user.id 
-          }).sort('order').lean();
-          return res.status(200).json(categories);
-        } catch (error) {
-          console.error('❌ Error fetching categories:', error.message);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
+        const categories = await getCategoriesWithBudgetUseCase({
+          userId: session.user.id
+        });
+        return res.status(200).json(categories);
 
       case 'POST':
         const result = await createCategoryUseCase({

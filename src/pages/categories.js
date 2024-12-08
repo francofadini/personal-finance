@@ -41,19 +41,9 @@ const CategoriesPage = () => {
 
   const loadCategories = async () => {
     try {
-      // Load both categories and subcategories
-      const [categories, subcategories] = await Promise.all([
-        categoryService.list(),
-        categoryService.listSubcategories()
-      ]);
-
-      // Combine them with proper structure
-      const categoriesWithSubs = categories.map(category => ({
-        ...category,
-        subcategories: subcategories.filter(sub => sub.categoryId === category._id)
-      }));
-
-      setCategories(categoriesWithSubs);
+      setLoading(true);
+      const categoriesData = await categoryService.list();
+      setCategories(categoriesData);
     } catch (error) {
       message.error('Error loading categories');
     } finally {
@@ -103,7 +93,7 @@ const CategoriesPage = () => {
 
   const handleDelete = async (category) => {
     try {
-      if (category.parentId) {
+      if (category.categoryId) {
         await categoryService.deleteSubcategory(category._id);
         message.success('Subcategory deleted successfully');
       } else {
@@ -113,6 +103,41 @@ const CategoriesPage = () => {
       loadCategories();
     } catch (error) {
       message.error('Error deleting category');
+    }
+  };
+
+  const handleApplyRules = async (category) => {
+    try {
+      setApplying(true);
+      const response = await fetch(`/api/categories/${category._id}/apply-rules`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) throw new Error('Failed to apply rules');
+      
+      const data = await response.json();
+      
+      // Success message
+      if (data.categorized > 0) {
+        message.success(t('categories.applyRules.successWithCount', { 
+          count: data.categorized
+        }));
+      } else {
+        message.info(t('categories.applyRules.noTransactions'));
+      }
+
+      // Show error message if there were any errors
+      if (data.errors > 0) {
+        message.warning(t('categories.applyRules.withErrors', { 
+          errors: data.errors
+        }));
+      }
+
+      loadCategories();
+    } catch (error) {
+      message.error(t('common.error'));
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -127,11 +152,25 @@ const CategoriesPage = () => {
       
       const data = await response.json();
       const categorized = data.results.reduce((sum, r) => sum + (r.categorized || 0), 0);
+      const errors = data.results.filter(r => r.status === 'error').length;
       
-      message.success(t('categories.applyRules.success', { 
-        count: categorized, 
-        total: data.total 
-      }));
+      // Success message
+      if (categorized > 0) {
+        message.success(t('categories.applyRules.successWithCount', { 
+          count: categorized
+        }));
+      } else {
+        message.info(t('categories.applyRules.noTransactions'));
+      }
+
+      // Show error message if there were any errors
+      if (errors > 0) {
+        message.warning(t('categories.applyRules.withErrors', { 
+          errors
+        }));
+      }
+
+      loadCategories();
     } catch (error) {
       message.error(t('common.error'));
     } finally {
@@ -153,7 +192,7 @@ const CategoriesPage = () => {
             setParentCategory(category);
             setFormVisible(true);
           }}
-          onApplyRules={handleApplyAllRules}
+          onApplyRules={() => handleApplyRules(category)}
         />
         {category.subcategories?.length > 0 && (
           <SubcategoryList>

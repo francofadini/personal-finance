@@ -8,6 +8,14 @@
       "deleteSuccess": "Account deleted successfully",
       "deleteError": "Error deleting account"
     },
+    "categories": {
+      "title": "Categories",
+      "applyRules": {
+        "successWithCount": "{{count}} transactions categorized",
+        "noTransactions": "No transactions to categorize",
+        "withErrors": "There were {{errors}} errors"
+      }
+    },
     "recurrentExpenses": {
       "title": "Recurrent Expenses",
       "new": "New Recurrent Expense",
