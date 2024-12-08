@@ -108,7 +108,6 @@ const CategoriesPage = () => {
 
   const handleApplyRules = async (category) => {
     try {
-      setApplying(true);
       const response = await fetch(`/api/categories/${category._id}/apply-rules`, {
         method: 'POST'
       });
@@ -136,8 +135,6 @@ const CategoriesPage = () => {
       loadCategories();
     } catch (error) {
       message.error(t('common.error'));
-    } finally {
-      setApplying(false);
     }
   };
 

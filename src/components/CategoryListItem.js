@@ -93,8 +93,8 @@ const CategoryListItem = ({
   children
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isApplyingRules, setIsApplyingRules] = useState(false);
   const isSubcategory = !!category.categoryId;
-
   return (
     <>
       <CategoryContainer>
@@ -145,7 +145,12 @@ const CategoryListItem = ({
             />
             <Button
               icon={<ThunderboltOutlined />}
-              onClick={() => onApplyRules(category)}
+              loading={isApplyingRules}
+              onClick={async () => {
+                setIsApplyingRules(true);
+                await onApplyRules(category);
+                setIsApplyingRules(false);
+              }}
             />
             <Button 
               icon={<DeleteOutlined />} 
