@@ -1,15 +1,15 @@
-import { Category } from '@/backend/models/Category';
+import { Subcategory } from '@/backend/models/Subcategory';
 import { RecurrentExpense } from '@/backend/models/RecurrentExpense';
 
 export const categorizeNewTransactionUseCase = async (transaction) => {
   try {
-
-    const [categories, recurrentExpenses] = await Promise.all([
-      Category.find({ userId: transaction.userId }),
+    const [subcategories, recurrentExpenses] = await Promise.all([
+      Subcategory.find({ userId: transaction.userId }),
       RecurrentExpense.find({ userId: transaction.userId })
+        .populate('subcategoryId', 'categoryId')
     ]);
 
-    // First try to match with recurrent expenses
+    // First try recurrent expenses
     const matchedExpense = recurrentExpenses.find(expense => 
       expense.keywords.some(keyword => 
         transaction.description.toLowerCase().includes(keyword.toLowerCase())
@@ -17,38 +17,40 @@ export const categorizeNewTransactionUseCase = async (transaction) => {
     );
 
     if (matchedExpense) {
-      transaction.categoryId = matchedExpense.categoryId;
+      transaction.categoryId = matchedExpense.subcategoryId.categoryId;
+      transaction.subcategoryId = matchedExpense.subcategoryId._id;
       transaction.recurrentExpenseId = matchedExpense._id;
       await transaction.save();
-      return {
-        status: 'categorized',
+      return { 
+        status: 'categorized', 
         method: 'recurrent',
-        expenseId: matchedExpense._id,
-        categoryId: matchedExpense.categoryId
+        categoryId: matchedExpense.subcategoryId.categoryId,
+        subcategoryId: matchedExpense.subcategoryId._id,
+        expenseId: matchedExpense._id
       };
     }
 
-    // Then try to match with category keywords
-    const matchedCategory = categories.find(category => 
-      category.keywords?.some(keyword => 
+    // Then try subcategory keywords
+    const matchedSubcategory = subcategories.find(sub => 
+      sub.keywords?.some(keyword => 
         transaction.description.toLowerCase().includes(keyword.toLowerCase())
       )
     );
 
-    if (matchedCategory) {
-      transaction.categoryId = matchedCategory._id;
+    if (matchedSubcategory) {
+      transaction.categoryId = matchedSubcategory.categoryId;
+      transaction.subcategoryId = matchedSubcategory._id;
       await transaction.save();
-      return {
-        status: 'categorized',
-        method: 'category',
-        categoryId: matchedCategory._id
+      return { 
+        status: 'categorized', 
+        method: 'keyword',
+        categoryId: matchedSubcategory.categoryId,
+        subcategoryId: matchedSubcategory._id
       };
     }
 
     return { status: 'uncategorized' };
-
   } catch (error) {
-    console.error('❌ Error categorizing transaction:', error.message);
     throw new Error(`Failed to categorize transaction: ${error.message}`);
   }
 }; 

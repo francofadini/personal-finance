@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
-import { createAccountOrchestrator } from '@/backend/use-cases/createAccountOrchestrator';
-import { getAccountsUseCase } from '@/backend/use-cases/getAccountsUseCase';
+import { createAccountOrchestrator } from '@/backend/use-cases/account/createAccountOrchestrator';
+import { getAccountsUseCase } from '@/backend/use-cases/account/getAccountsUseCase';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
