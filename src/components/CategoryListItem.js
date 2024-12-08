@@ -76,60 +76,87 @@ const SubcategoriesList = styled.div`
   }
 `;
 
+const ExpandedActions = styled.div`
+  padding: 0 16px 16px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+`;
+
 const CategoryListItem = ({ 
   category, 
   onEdit, 
   onDelete, 
   onAddSub, 
-  onApplyRules 
+  onApplyRules,
+  hasSubcategories,
+  children
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const isSubcategory = !!category.categoryId;
-  const [applying, setApplying] = useState(false);
 
   return (
-    <CategoryContainer>
-      <MainRow>
-        {!isSubcategory && (
-          <IconCircle $color={category.color}>
-            {category.icon}
-          </IconCircle>
-        )}
-        <CategoryInfo>
-          <Name>{category.name}</Name>
-          <Budget>
-            {category.monthlyBudget ? `${category.monthlyBudget}€/month` : 'No budget set'}
-          </Budget>
-        </CategoryInfo>
-        <ActionButtons>
-          <Button 
-            icon={<EditOutlined />} 
-            onClick={() => onEdit(category)} 
-          />
+    <>
+      <CategoryContainer>
+        <MainRow>
           {!isSubcategory && (
-            <>
-              <Button 
-                icon={<PlusCircleOutlined />} 
-                onClick={() => onAddSub(category)} 
-              />
-              <Button
-                icon={<ThunderboltOutlined />}
-                loading={applying}
-                onClick={async () => {
-                  setApplying(true);
-                  await onApplyRules(category);
-                  setApplying(false);
-                }}
-              />
-            </>
+            <IconCircle $color={category.color}>
+              {category.icon}
+            </IconCircle>
           )}
-          <Button 
-            icon={<DeleteOutlined />} 
-            danger 
-            onClick={() => onDelete(category)} 
-          />
-        </ActionButtons>
-      </MainRow>
-    </CategoryContainer>
+          <CategoryInfo>
+            <Name>{category.name}</Name>
+            <Budget>
+              {category.monthlyBudget ? `${category.monthlyBudget}€/month` : 'No budget set'}
+            </Budget>
+          </CategoryInfo>
+          <ActionButtons>
+            {!isSubcategory && (
+              <Button
+                icon={isCollapsed ? <DownOutlined /> : <UpOutlined />}
+                onClick={() => setIsCollapsed(!isCollapsed)}
+              />
+            )}
+            {isSubcategory && (
+              <>
+                <Button 
+                  icon={<EditOutlined />} 
+                  onClick={() => onEdit(category)} 
+                />
+                <Button 
+                  icon={<DeleteOutlined />} 
+                  danger 
+                  onClick={() => onDelete(category)} 
+                />
+              </>
+            )}
+          </ActionButtons>
+        </MainRow>
+
+        {!isSubcategory && !isCollapsed && (
+          <ExpandedActions>
+            <Button 
+              icon={<EditOutlined />} 
+              onClick={() => onEdit(category)} 
+            />
+            <Button 
+              icon={<PlusCircleOutlined />} 
+              onClick={() => onAddSub(category)} 
+            />
+            <Button
+              icon={<ThunderboltOutlined />}
+              onClick={() => onApplyRules(category)}
+            />
+            <Button 
+              icon={<DeleteOutlined />} 
+              danger 
+              onClick={() => onDelete(category)} 
+            />
+          </ExpandedActions>
+        )}
+      </CategoryContainer>
+      {!isCollapsed && children}
+    </>
   );
 };
 

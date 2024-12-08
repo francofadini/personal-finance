@@ -193,23 +193,25 @@ const CategoriesPage = () => {
             setFormVisible(true);
           }}
           onApplyRules={() => handleApplyRules(category)}
-        />
-        {category.subcategories?.length > 0 && (
-          <SubcategoryList>
-            {category.subcategories.map(subcat => (
-              <CategoryListItem
-                key={subcat._id}
-                category={subcat}
-                onEdit={() => {
-                  setEditingCategory(subcat);
-                  setParentCategory(category);
-                  setFormVisible(true);
-                }}
-                onDelete={handleDelete}
-              />
-            ))}
-          </SubcategoryList>
-        )}
+          hasSubcategories={category.subcategories?.length > 0}
+        >
+          {category.subcategories?.length > 0 && (
+            <SubcategoryList>
+              {category.subcategories.map(subcat => (
+                <CategoryListItem
+                  key={subcat._id}
+                  category={subcat}
+                  onEdit={() => {
+                    setEditingCategory(subcat);
+                    setParentCategory(category);
+                    setFormVisible(true);
+                  }}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </SubcategoryList>
+          )}
+        </CategoryListItem>
       </div>
     );
   };
