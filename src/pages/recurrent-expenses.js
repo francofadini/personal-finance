@@ -132,10 +132,11 @@ const RecurrentExpensesPage = () => {
 
   const groupExpensesByCategory = (expenses) => {
     return expenses.reduce((groups, expense) => {
-      const categoryId = expense.categoryId._id;
+      const category = expense.categoryId ?? { _id: 'uncategorized', name: 'Uncategorized', color: '#000000', icon: '💰' };
+      const categoryId = category._id;
       if (!groups[categoryId]) {
         groups[categoryId] = {
-          category: expense.categoryId,
+          category,
           expenses: [],
           total: 0
         };

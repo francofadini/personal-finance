@@ -49,7 +49,7 @@ async function handleGetTransactions(req, res, userId) {
 
   const [transactions, total] = await Promise.all([
     Transaction.find(query)
-      .populate('categoryId', 'name color icon')
+      .populate('categoryId', 'name color icons')
       .skip(skip)
       .limit(limit)
       .exec(),
