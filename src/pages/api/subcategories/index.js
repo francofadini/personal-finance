@@ -1,8 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
-import { Category } from '@/backend/models/Category';
-import { createCategoryUseCase } from '@/backend/use-cases/category/createCategoryUseCase';
+import { createSubcategoryUseCase } from '@/backend/use-cases/subcategory/createSubcategoryUseCase';
+import { Subcategory } from '@/backend/models/Subcategory';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -15,18 +15,14 @@ export default async function handler(req, res) {
 
     switch (req.method) {
       case 'GET':
-        try {
-          const categories = await Category.find({ 
-            userId: session.user.id 
-          }).sort('order').lean();
-          return res.status(200).json(categories);
-        } catch (error) {
-          console.error('❌ Error fetching categories:', error.message);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
+        const subcategories = await Subcategory.find({ 
+          userId: session.user.id ,
+          isVisible: true
+        }).sort('order').lean();
+        return res.status(200).json(subcategories);
 
       case 'POST':
-        const result = await createCategoryUseCase({
+        const result = await createSubcategoryUseCase({
           ...req.body,
           userId: session.user.id
         });
@@ -37,7 +33,7 @@ export default async function handler(req, res) {
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
-    console.error('❌ Categories API Error:', error.message);
+    console.error('❌ Subcategories API Error:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 } 

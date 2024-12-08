@@ -40,7 +40,7 @@ const CategoryForm = ({
   const [form] = Form.useForm();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  const isSubcategory = !!parentCategory || initialValues?.parentId;
+  const isSubcategory = !!parentCategory;
 
   const handleSubmit = async () => {
     try {
@@ -72,17 +72,17 @@ const CategoryForm = ({
       >
         <Form.Item
           name="name"
-          label="Name"
-          rules={[{ required: true, message: 'Please input category name!' }]}
+          label={isSubcategory ? "Subcategory name" : "Category name"}
+          rules={[{ required: true }]}
         >
-          <Input placeholder="Category name" />
+          <Input placeholder={isSubcategory ? "Subcategory name" : "Category name"} />
         </Form.Item>
 
         {!isSubcategory && (
           <Form.Item
             name="icon"
             label="Icon"
-            rules={[{ required: !isSubcategory, message: 'Please select an icon!' }]}
+            rules={[{ required: true }]}
           >
             <EmojiButton onClick={() => setShowEmojiPicker(true)}>
               {form.getFieldValue('icon') || '🏷️'}

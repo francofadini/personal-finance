@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import { Category } from '@/backend/models/Category';
-import { applyNewCategoryRulesUseCase } from '@/backend/use-cases/category/applyNewCategoryRulesUseCase';
+import { applyCategoryRulesUseCase } from '@/backend/use-cases/category/applyCategoryRulesUseCase';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -20,13 +20,12 @@ export default async function handler(req, res) {
     
     const categories = await Category.find({ 
       userId: session.user.id,
-      keywords: { $exists: true, $ne: [] }
     });
 
     const results = await Promise.all(
       categories.map(async (category) => {
         try {
-          const result = await applyNewCategoryRulesUseCase(category);
+          const result = await applyCategoryRulesUseCase(category);
           return {
             categoryId: category._id,
             name: category.name,

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import { Category } from '@/backend/models/Category';
-import { applyNewCategoryRulesUseCase } from '@/backend/use-cases/category/applyNewCategoryRulesUseCase';
+import { applyCategoryRulesUseCase } from '@/backend/use-cases/category/applyCategoryRulesUseCase';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Category not found' });
     }
 
-    const result = await applyNewCategoryRulesUseCase(category);
+    const result = await applyCategoryRulesUseCase(category);
     return res.status(200).json(result);
 
   } catch (error) {

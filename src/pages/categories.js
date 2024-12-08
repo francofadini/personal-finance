@@ -41,8 +41,19 @@ const CategoriesPage = () => {
 
   const loadCategories = async () => {
     try {
-      const data = await categoryService.list();
-      setCategories(data);
+      // Load both categories and subcategories
+      const [categories, subcategories] = await Promise.all([
+        categoryService.list(),
+        categoryService.listSubcategories()
+      ]);
+
+      // Combine them with proper structure
+      const categoriesWithSubs = categories.map(category => ({
+        ...category,
+        subcategories: subcategories.filter(sub => sub.categoryId === category._id)
+      }));
+
+      setCategories(categoriesWithSubs);
     } catch (error) {
       message.error('Error loading categories');
     } finally {
@@ -52,17 +63,29 @@ const CategoriesPage = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const dataToSubmit = {
-        ...values,
-        parentId: parentCategory?._id || null
-      };
+      if (parentCategory) {
+        // Handle subcategory creation/update
+        const dataToSubmit = {
+          ...values,
+          categoryId: parentCategory._id
+        };
 
-      if (editingCategory?._id) {
-        await categoryService.update(editingCategory._id, dataToSubmit);
-        message.success('Category updated successfully');
+        if (editingCategory?._id) {
+          await categoryService.updateSubcategory(editingCategory._id, dataToSubmit);
+          message.success('Subcategory updated successfully');
+        } else {
+          await categoryService.createSubcategory(dataToSubmit);
+          message.success('Subcategory created successfully');
+        }
       } else {
-        await categoryService.create(dataToSubmit);
-        message.success('Category created successfully');
+        // Handle main category creation/update
+        if (editingCategory?._id) {
+          await categoryService.update(editingCategory._id, values);
+          message.success('Category updated successfully');
+        } else {
+          await categoryService.create(values);
+          message.success('Category created successfully');
+        }
       }
       
       loadCategories();
@@ -78,10 +101,15 @@ const CategoriesPage = () => {
     setParentCategory(null);
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDelete = async (category) => {
     try {
-      await categoryService.delete(categoryId);
-      message.success('Category deleted successfully');
+      if (category.parentId) {
+        await categoryService.deleteSubcategory(category._id);
+        message.success('Subcategory deleted successfully');
+      } else {
+        await categoryService.delete(category._id);
+        message.success('Category deleted successfully');
+      }
       loadCategories();
     } catch (error) {
       message.error('Error deleting category');
@@ -112,8 +140,6 @@ const CategoriesPage = () => {
   };
 
   const renderCategory = (category) => {
-    const subcategories = categories.filter(cat => cat.parentId === category._id);
-    
     return (
       <div key={category._id}>
         <CategoryListItem
@@ -129,9 +155,20 @@ const CategoriesPage = () => {
           }}
           onApplyRules={handleApplyAllRules}
         />
-        {subcategories.length > 0 && (
+        {category.subcategories?.length > 0 && (
           <SubcategoryList>
-            {subcategories.map(subcat => renderCategory(subcat))}
+            {category.subcategories.map(subcat => (
+              <CategoryListItem
+                key={subcat._id}
+                category={subcat}
+                onEdit={() => {
+                  setEditingCategory(subcat);
+                  setParentCategory(category);
+                  setFormVisible(true);
+                }}
+                onDelete={handleDelete}
+              />
+            ))}
           </SubcategoryList>
         )}
       </div>
@@ -161,9 +198,7 @@ const CategoriesPage = () => {
       />
       
       <Container>
-        {categories
-          .filter(cat => !cat.parentId)
-          .map(renderCategory)}
+        {categories.map(renderCategory)}
       </Container>
 
       <ModalBottomSheet

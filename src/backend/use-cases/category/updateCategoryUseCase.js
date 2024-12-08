@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Category } from '@/backend/models/Category';
 import { Subcategory } from '@/backend/models/Subcategory';
 
-export const updateCategoryUseCase = async ({ categoryId, userId, name, icon }) => {
+export const updateCategoryUseCase = async ({ categoryId, userId, name, icon, keywords, monthlyBudget }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -19,7 +19,7 @@ export const updateCategoryUseCase = async ({ categoryId, userId, name, icon }) 
 
     const defaultSubcategory = await Subcategory.findOneAndUpdate(
       { categoryId, userId, isDefault: true },
-      { name }, // Sync name with category
+      { name, keywords, monthlyBudget }, // Sync name with category
       { new: true, session }
     );
 

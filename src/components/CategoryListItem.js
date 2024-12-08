@@ -76,50 +76,47 @@ const SubcategoriesList = styled.div`
   }
 `;
 
-const CategoryListItem = ({ category, subcategories, onEdit, onDelete, onAddSub, onApplyRules }) => {
-  const [expanded, setExpanded] = useState(true);
-  const hasSubcategories = subcategories?.length > 0;
-  const isSubcategory = category.parentId;
+const CategoryListItem = ({ 
+  category, 
+  onEdit, 
+  onDelete, 
+  onAddSub, 
+  onApplyRules 
+}) => {
+  const isSubcategory = !!category.categoryId;
 
   return (
     <CategoryContainer>
       <MainRow>
-        <IconCircle $color={category.color} $isSubcategory={isSubcategory}>
-          {category.icon}
-        </IconCircle>
+        {!isSubcategory && (
+          <IconCircle $color={category.color}>
+            {category.icon}
+          </IconCircle>
+        )}
         <CategoryInfo>
           <Name>{category.name}</Name>
-          <Budget>{category.monthlyBudget ? `${category.monthlyBudget}€/month` : 'No budget set'}</Budget>
+          <Budget>
+            {category.monthlyBudget ? `${category.monthlyBudget}€/month` : 'No budget set'}
+          </Budget>
         </CategoryInfo>
         <ActionButtons>
-          <Button icon={<EditOutlined />} type="text" onClick={() => onEdit(category)} />
+          <Button 
+            icon={<EditOutlined />} 
+            onClick={() => onEdit(category)} 
+          />
           {!isSubcategory && (
-            <Button icon={<PlusCircleOutlined />} type="text" onClick={() => onAddSub(category)} />
-          )}
-          <Button icon={<ThunderboltOutlined />} type="text" onClick={() => onApplyRules(category._id)} />
-          <Button icon={<DeleteOutlined />} type="text" danger onClick={() => onDelete(category._id)} />
-          {hasSubcategories && (
-            <ExpandButton 
-              icon={expanded ? <UpOutlined /> : <DownOutlined />}
-              onClick={() => setExpanded(!expanded)}
+            <Button 
+              icon={<PlusCircleOutlined />} 
+              onClick={() => onAddSub(category)} 
             />
           )}
+          <Button 
+            icon={<DeleteOutlined />} 
+            danger 
+            onClick={() => onDelete(category)} 
+          />
         </ActionButtons>
       </MainRow>
-
-      {hasSubcategories && expanded && (
-        <SubcategoriesList>
-          {subcategories.map(subcat => (
-            <CategoryListItem
-              key={subcat._id}
-              category={subcat}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onApplyRules={onApplyRules}
-            />
-          ))}
-        </SubcategoriesList>
-      )}
     </CategoryContainer>
   );
 };

@@ -1,7 +1,7 @@
 import { Subcategory } from '@/backend/models/Subcategory';
 import { applySubcategoryRulesUseCase } from '../subcategory/applySubcategoryRulesUseCase';
 
-export const applyCategoryRulesUseCase = async ({ category }) => {
+export const applyCategoryRulesUseCase = async (category) => {
   try {
     // Get all subcategories for this category
     const subcategories = await Subcategory.find({ 
