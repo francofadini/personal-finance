@@ -183,7 +183,7 @@ const RecurrentExpensesPage = () => {
           sortedGroupedExpenses.map(({ category, expenses, total }) => (
             <CategoryGroup key={category._id}>
               <CategoryHeader>
-                <CategoryIcon style={{ color: category.color }}>
+                <CategoryIcon>
                   {category.icon}
                 </CategoryIcon>
                 <CategoryName>{category.name}</CategoryName>

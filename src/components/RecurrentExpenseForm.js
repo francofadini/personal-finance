@@ -124,7 +124,7 @@ const RecurrentExpenseForm = ({
           {categories.map(category => (
             <Select.Option key={category._id} value={category._id}>
               <Space>
-                <span style={{ color: category.color }}>{category.icon}</span>
+                <span>{category.icon}</span>
                 {category.name}
               </Space>
             </Select.Option>

@@ -12,7 +12,6 @@ export const createCategoryUseCase = async ({ name, icon, keywords, monthlyBudge
       name,
       icon,
       userId,
-      color: getRandomColor()
     }], { session });
 
     const [defaultSubcategory] = await Subcategory.create([{
