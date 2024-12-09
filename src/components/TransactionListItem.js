@@ -38,6 +38,7 @@ const IconCircle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 24px;
 `;
 
 const TextSection = styled.div`
@@ -69,6 +70,8 @@ const Amount = styled(Text)`
 
 const TransactionListItem = ({ transaction }) => {
   const isNegative = transaction.amount < 0;
+  const isDefault = transaction.categoryId?.name == transaction.subcategoryId?.name;
+  const categoryLabel = !isDefault ? `${transaction.categoryId?.name} / ${transaction.subcategoryId?.name}` : (transaction.categoryId?.name ?? 'Uncategorized');
   
   return (
     <TransactionCell>
@@ -78,7 +81,7 @@ const TransactionListItem = ({ transaction }) => {
         </IconCircle>
         <TextSection>
           <Title>{transaction.description}</Title>
-          <Category>{transaction.categoryId?.name || 'Uncategorized'}</Category>
+          <Category>{categoryLabel}</Category>
         </TextSection>
       </InfoSection>
       <Amount $isNegative={isNegative}>
