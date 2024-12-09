@@ -34,7 +34,7 @@ const IconCircle = styled.div`
   height: 40px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: ${props => props.$color || '#f5f5f5'};
+  background: ${props => props.$color || '#ffffff'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,8 +73,8 @@ const TransactionListItem = ({ transaction }) => {
   return (
     <TransactionCell>
       <InfoSection>
-        <IconCircle $color={transaction.category?.color}>
-          {/* Add category icon here */}
+        <IconCircle>
+          {transaction.categoryId?.icon}
         </IconCircle>
         <TextSection>
           <Title>{transaction.description}</Title>

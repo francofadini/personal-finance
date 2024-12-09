@@ -22,7 +22,7 @@ const IconCircle = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: ${props => props.$color || '#f5f5f5'};
+  background: ${props => props.$color || '#ffffff'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +74,7 @@ const CategoryCard = ({ category, onEdit, onDelete, onAddSubcategory, onApplyRul
   return (
     <Card>
       <CategoryHeader>
-        <IconCircle $color={category.color}>
+        <IconCircle>
           {category.icon}
         </IconCircle>
         <CategoryInfo>
