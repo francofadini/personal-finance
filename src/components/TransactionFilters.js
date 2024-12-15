@@ -30,11 +30,13 @@ const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
   const handleApply = () => {
     onApply({ 
       dates: [startDate, endDate].filter(Boolean), 
-      category: selectedCategory 
+      category: selectedCategory,
+      subcategory: selectedSubcategory
     });
     onClose();
   };
@@ -43,7 +45,8 @@ const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
     setStartDate(null);
     setEndDate(null);
     setSelectedCategory(null);
-    onApply({ dates: null, category: null });
+    setSelectedSubcategory(null);
+    onApply({ dates: null, category: null, subcategory: null });
     onClose();
   };
 
@@ -57,8 +60,11 @@ const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
 
         <Select
           style={{ width: '100%', height: '44px' }}
-          placeholder="Select a category"
-          onChange={setSelectedCategory}
+          placeholder="Select category"
+          onChange={(value) => {
+            setSelectedCategory(value);
+            setSelectedSubcategory(null);
+          }}
           value={selectedCategory}
           allowClear
         >
@@ -67,6 +73,20 @@ const TransactionFilters = ({ visible, onClose, onApply, categories }) => {
               {category.name}
             </Option>
           ))}
+        </Select>
+
+        <Select
+          placeholder="Select subcategory"
+          disabled={!selectedCategory}
+          value={selectedSubcategory}
+          onChange={setSelectedSubcategory}
+          allowClear
+        >
+          {categories
+            .find(c => c._id === selectedCategory)
+            ?.subcategories.map(sub => (
+              <Option key={sub._id} value={sub._id}>{sub.name}</Option>
+            ))}
         </Select>
 
         <ButtonRow>

@@ -28,7 +28,8 @@ export default async function handler(req, res) {
 async function handleGetTransactions(req, res, userId) {
   const { 
     accountId, 
-    categoryId, 
+    categoryId,
+    subcategoryId,
     startDate, 
     endDate,
     page = 1,
@@ -36,14 +37,16 @@ async function handleGetTransactions(req, res, userId) {
   } = req.query;
 
   const query = { userId };
+  console.log(startDate, endDate);
   
   if (accountId) query.accountId = accountId;
   if (categoryId) query.categoryId = categoryId;
+  if (subcategoryId) query.subcategoryId = subcategoryId;
   if (startDate || endDate) {
     query.date = {};
-    if (startDate) query.date.$gte = new Date(startDate);
-    if (endDate) query.date.$lte = new Date(endDate);
   }
+  if (startDate) query.date.$gte = new Date(startDate);
+  if (endDate) query.date.$lte = new Date(endDate);
 
   const skip = (page - 1) * limit;
 

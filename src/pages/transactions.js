@@ -21,7 +21,8 @@ const TransactionsPage = () => {
   const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState({
     dates: null,
-    category: null
+    category: null,
+    subcategory: null
   });
 
   useEffect(() => {
@@ -33,18 +34,18 @@ const TransactionsPage = () => {
     try {
       const params = new URLSearchParams();
       if (filters.dates) {
-        params.append('startDate', filters.dates[0].toISOString());
-        params.append('endDate', filters.dates[1].toISOString());
+        if (filters.dates[0]) params.append('startDate', filters.dates[0].format('YYYY-MM-DD'));
+        if (filters.dates[1]) params.append('endDate', filters.dates[1].format('YYYY-MM-DD'));
       }
-      if (filters.category) {
-        params.append('categoryId', filters.category);
-      }
+      if (filters.category) params.append('categoryId', filters.category);
+      if (filters.subcategory) params.append('subcategoryId', filters.subcategory);
 
       const response = await fetch(`/api/transactions?${params}`);
       if (!response.ok) throw new Error('Failed to fetch transactions');
       const data = await response.json();
       setTransactions(data.transactions);
     } catch (error) {
+      console.error(error);
       message.error('Failed to load transactions');
     } finally {
       setLoading(false);
@@ -78,6 +79,7 @@ const TransactionsPage = () => {
           <FiltersButton
             icon={<FilterOutlined />}
             onClick={() => setShowFilters(true)}
+            onApply={handleApplyFilters}
           >
             Filter
           </FiltersButton>
