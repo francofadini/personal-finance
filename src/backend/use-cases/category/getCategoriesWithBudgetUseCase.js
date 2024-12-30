@@ -27,6 +27,7 @@ export const getCategoriesWithBudgetUseCase = async ({ userId }) => {
 
       return {
         ...category,
+        defaultSubcategoryId: defaultSubcategory?._id,
         keywords: defaultSubcategory?.keywords || [],
         monthlyBudget: totalBudget,
         subcategories: categorySubcategories.filter(sub => sub.isVisible)

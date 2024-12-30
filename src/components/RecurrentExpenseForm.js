@@ -30,6 +30,8 @@ const RecurrentExpenseForm = ({
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   
   // Helper function to compare arrays
   const compareArrays = (a = [], b = []) => {
@@ -115,20 +117,29 @@ const RecurrentExpenseForm = ({
         />
       </Form.Item>
 
-      <Form.Item
-        name="categoryId"
-        label={t('recurrentExpenses.form.category')}
-        rules={[{ required: true }]}
-      >
-        <Select>
+      <Form.Item name="categoryId" label="Category">
+        <Select onChange={(value) => {
+          setSelectedCategory(value);
+          setSelectedSubcategory(null);
+          form.setFieldsValue({ subcategoryId: null });
+        }}>
           {categories.map(category => (
             <Select.Option key={category._id} value={category._id}>
-              <Space>
-                <span>{category.icon}</span>
-                {category.name}
-              </Space>
+              {category.icon} {category.name}
             </Select.Option>
           ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item name="subcategoryId" label="Subcategory">
+        <Select disabled={!selectedCategory}>
+          {categories
+            .find(c => c._id === selectedCategory)
+            ?.subcategories.map(sub => (
+              <Select.Option key={sub._id} value={sub._id}>
+                {sub.name}
+              </Select.Option>
+            ))}
         </Select>
       </Form.Item>
 

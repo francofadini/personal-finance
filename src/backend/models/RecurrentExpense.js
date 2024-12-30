@@ -10,9 +10,12 @@ const recurrentExpenseSchema = new mongoose.Schema({
     required: true 
   },
   categoryId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Category',
-    required: true 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
+  subcategoryId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Subcategory'
   },
   estimatedAmount: { 
     type: Number, 

@@ -79,10 +79,31 @@ const ActionButtons = styled.div`
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const CategoryText = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const IconCircle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: ${({ $token }) => $token?.colorInfoBg};
+  color: ${({ $token }) => $token?.colorInfo};
+`;
+
 const RecurrentExpenseListItem = ({ expense, onEdit, onDelete }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { name, estimatedAmount, months, dayOfMonth } = expense;
+  const isDefault = expense.categoryId?.name === expense.subcategoryId?.name;
+  const categoryLabel = !isDefault 
+    ? `${expense.categoryId?.name} / ${expense.subcategoryId?.name}` 
+    : (expense.categoryId?.name ?? 'Uncategorized');
   
   const handleDelete = () => {
     Modal.confirm({
@@ -98,20 +119,11 @@ const RecurrentExpenseListItem = ({ expense, onEdit, onDelete }) => {
   return (
     <ExpenseCell>
       <InfoSection>
+        <IconCircle>{expense.categoryId?.icon}</IconCircle>
         <TextSection>
           <Title>{name}</Title>
           <Subtitle>
-            {months.length === 12 ? (
-              <MonthTag>Every month</MonthTag>
-            ) : (
-              <MonthTags>
-                {months.sort((a, b) => a - b).map(m => (
-                  <MonthTag key={m} $token={token}>
-                    {MONTHS[m-1]}
-                  </MonthTag>
-                ))}
-              </MonthTags>
-            )}
+            <CategoryText>{categoryLabel}</CategoryText>
             <DayInfo>
               <CalendarOutlined /> Day {dayOfMonth}
             </DayInfo>
