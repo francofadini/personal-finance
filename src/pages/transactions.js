@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { message, Input, theme } from 'antd';
+import { message, Input, theme, Button } from 'antd';
 import styled from 'styled-components';
 import Layout from '@/components/Layout';
 import MobileHeader from '@/components/MobileHeader';
 import TransactionList from '@/components/TransactionList';
 import TransactionFilters from '@/components/TransactionFilters';
 import MainButton from '@/components/MainButton';
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import TransactionForm from '@/components/TransactionForm';
 
 const FiltersButton = styled(MainButton)`
   margin-left: auto;
@@ -18,16 +19,19 @@ const TransactionsPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState({
     dates: null,
     category: null,
     subcategory: null
   });
+  const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
     fetchTransactions();
     fetchCategories();
+    fetchAccounts();
   }, [filters]);
 
   const fetchTransactions = async () => {
@@ -63,6 +67,17 @@ const TransactionsPage = () => {
     }
   };
 
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) throw new Error('Failed to fetch accounts');
+      const data = await response.json();
+      setAccounts(data);
+    } catch (error) {
+      message.error('Failed to load accounts');
+    }
+  };
+
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
   };
@@ -79,18 +94,28 @@ const TransactionsPage = () => {
     );
   };
 
+  const handleTransactionCreate = (newTransaction) => {
+    setTransactions(current => [newTransaction, ...current]);
+  };
+
+  const handleTransactionDelete = (transactionId) => {
+    setTransactions(current => 
+      current.filter(t => t._id !== transactionId)
+    );
+  };
+
   return (
     <Layout>
       <MobileHeader
         title="Transactions"
         action={
-          <FiltersButton
-            icon={<FilterOutlined />}
-            onClick={() => setShowFilters(true)}
-            onApply={handleApplyFilters}
+          <Button 
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setShowAddForm(true)}
           >
-            Filter
-          </FiltersButton>
+            Add
+          </Button>
         }
         showSearch
         searchProps={{
@@ -106,6 +131,7 @@ const TransactionsPage = () => {
         transactions={filteredTransactions}
         loading={loading}
         onTransactionUpdate={handleTransactionUpdate}
+        onTransactionDelete={handleTransactionDelete}
       />
 
       <TransactionFilters
@@ -113,6 +139,13 @@ const TransactionsPage = () => {
         onClose={() => setShowFilters(false)}
         onApply={handleApplyFilters}
         categories={categories}
+      />
+
+      <TransactionForm
+        visible={showAddForm}
+        onClose={() => setShowAddForm(false)}
+        onSuccess={handleTransactionCreate}
+        accounts={accounts}
       />
     </Layout>
   );

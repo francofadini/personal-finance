@@ -5,6 +5,11 @@ const transactionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     required: true 
   },
+  internalId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
+    required: true
+  },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Account',
@@ -43,12 +48,33 @@ const transactionSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isManual: {
+    type: Boolean,
+    default: false
+  },
   metadata: {
     type: mongoose.Schema.Types.Mixed,
     default: {}
   }
+}, {
+  timestamps: true // Add createdAt and updatedAt fields
 });
 
-transactionSchema.index({ userId: 1, date: -1 });
+// Indexes
+transactionSchema.index({ internalId: 1 }, { unique: true }); // Global unique internalId
+transactionSchema.index({ userId: 1 }); // For user queries
+transactionSchema.index(
+  { 
+    accountId: 1, 
+    'metadata.gocardless.transactionId': 1 
+  }, 
+  { 
+    unique: true,
+    partialFilterExpression: { 
+      isManual: { $ne: true },
+      'metadata.gocardless.transactionId': { $exists: true }
+    }
+  }
+); // For GoCardless transaction uniqueness
 
 export default mongoose.models.Transaction || mongoose.model('Transaction', transactionSchema);

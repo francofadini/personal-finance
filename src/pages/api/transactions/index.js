@@ -3,6 +3,7 @@ import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import Transaction from '@/backend/models/Transaction';
 import { updateTransactionUseCase } from '@/backend/use-cases/transaction/updateTransactionUseCase';
+import { createTransactionUseCase } from '@/backend/use-cases/transaction/createTransactionUseCase';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -18,8 +19,10 @@ export default async function handler(req, res) {
         return handleGetTransactions(req, res, session.user.id);
       case 'PUT':
         return handleUpdateTransaction(req, res, session.user.id);
+      case 'POST':
+        return handleCreateTransaction(req, res, session.user.id);
       default:
-        res.setHeader('Allow', ['GET', 'PUT']);
+        res.setHeader('Allow', ['GET', 'PUT', 'POST']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
@@ -81,4 +84,27 @@ async function handleUpdateTransaction(req, res, userId) {
   });
 
   return res.status(200).json(transaction);
+}
+
+async function handleCreateTransaction(req, res, userId) {
+  const { accountId, amount, description, date, categoryId, subcategoryId } = req.body;
+
+  try {
+    const result = await createTransactionUseCase({
+      userId,
+      accountId,
+      amount: parseFloat(amount),
+      currency: 'EUR',
+      description,
+      date,
+      categoryId,
+      subcategoryId,
+      isManual: true
+    });
+
+    return res.status(201).json(result.transaction);
+  } catch (error) {
+    console.error('❌ Create transaction Error:', error.message);
+    return res.status(400).json({ error: error.message });
+  }
 } 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Typography, Modal, message, Button } from 'antd';
+import { Typography, Modal, message, Button, Popconfirm } from 'antd';
 import { formatCurrency } from '../utils/formater';
 import CategorySelector from './CategorySelector';
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -72,7 +72,15 @@ const Amount = styled(Text)`
   flex-shrink: 0;
 `;
 
-const TransactionListItem = ({ transaction, onUpdate }) => {
+const ManualBadge = styled.span`
+  font-size: 12px;
+  padding: 2px 6px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-left: 8px;
+`;
+
+const TransactionListItem = ({ transaction, onUpdate, onDelete }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const isNegative = transaction.amount < 0;
   const isDefault = transaction.categoryId?.name == transaction.subcategoryId?.name;
@@ -125,6 +133,21 @@ const TransactionListItem = ({ transaction, onUpdate }) => {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    try {
+      const response = await fetch(`/api/transactions/${transaction._id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Failed to delete transaction');
+      onDelete?.(transaction._id);
+      message.success('Transaction deleted successfully');
+    } catch (error) {
+      message.error('Failed to delete transaction');
+    }
+  };
+
   return (
     <>
       <TransactionCell 
@@ -136,7 +159,10 @@ const TransactionListItem = ({ transaction, onUpdate }) => {
             {transaction.categoryId?.icon}
           </IconCircle>
           <TextSection>
-            <Title>{transaction.description}</Title>
+            <Title>
+              {transaction.description}
+              {transaction.isManual && <ManualBadge>Manual</ManualBadge>}
+            </Title>
             <Category>{categoryLabel}</Category>
           </TextSection>
         </InfoSection>
@@ -149,6 +175,21 @@ const TransactionListItem = ({ transaction, onUpdate }) => {
             icon={transaction.ignored ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             onClick={handleIgnoreToggle}
           />
+          {transaction.isManual && (
+            <Popconfirm
+              title="Delete transaction?"
+              onConfirm={handleDelete}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button 
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={e => e.stopPropagation()}
+              />
+            </Popconfirm>
+          )}
         </div>
       </TransactionCell>
 

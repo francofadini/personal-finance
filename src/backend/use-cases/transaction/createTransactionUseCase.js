@@ -32,6 +32,7 @@ export const createTransactionUseCase = async ({
       description: description?.trim() || 'No description',
       note: note?.trim(),
       date: new Date(date),
+      isManual: true,
       metadata
     }], { session });
 

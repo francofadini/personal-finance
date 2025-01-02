@@ -42,11 +42,15 @@ const DateHeader = styled.div`
   }
 `;
 
-const TransactionList = ({ transactions, loading, onTransactionUpdate }) => {
+const TransactionList = ({ transactions, loading, onTransactionUpdate, onTransactionDelete }) => {
   const { token } = theme.useToken();
   
   const handleTransactionUpdate = (updatedTransaction) => {
     onTransactionUpdate?.(updatedTransaction);
+  };
+
+  const handleTransactionDelete = (transactionId) => {
+    onTransactionDelete?.(transactionId);
   };
 
   const groupedTransactions = transactions.reduce((groups, transaction) => {
@@ -70,6 +74,7 @@ const TransactionList = ({ transactions, loading, onTransactionUpdate }) => {
                 key={transaction._id} 
                 transaction={transaction}
                 onUpdate={handleTransactionUpdate}
+                onDelete={handleTransactionDelete}
               />
             ))}
           </DateGroup>
