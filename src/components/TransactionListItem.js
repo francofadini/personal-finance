@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Typography, Modal, message } from 'antd';
+import { Typography, Modal, message, Button } from 'antd';
 import { formatCurrency } from '../utils/formater';
 import CategorySelector from './CategorySelector';
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -17,7 +18,8 @@ const TransactionCell = styled.div`
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-
+  opacity: ${props => props.$ignored ? 0.5 : 1};
+  
   &:active {
     background: #fafafa;
   }
@@ -101,9 +103,34 @@ const TransactionListItem = ({ transaction, onUpdate }) => {
     }
   };
 
+  const handleIgnoreToggle = async (e) => {
+    e.stopPropagation(); // Prevent modal from opening
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionId: transaction._id,
+          ignored: !transaction.ignored
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update transaction');
+      
+      const updatedTransaction = await response.json();
+      onUpdate?.(updatedTransaction);
+      message.success(updatedTransaction.ignored ? 'Transaction ignored' : 'Transaction un-ignored');
+    } catch (error) {
+      message.error('Failed to update transaction');
+    }
+  };
+
   return (
     <>
-      <TransactionCell onClick={() => setIsModalVisible(true)}>
+      <TransactionCell 
+        $ignored={transaction.ignored}
+        onClick={() => setIsModalVisible(true)}
+      >
         <InfoSection>
           <IconCircle>
             {transaction.categoryId?.icon}
@@ -113,9 +140,16 @@ const TransactionListItem = ({ transaction, onUpdate }) => {
             <Category>{categoryLabel}</Category>
           </TextSection>
         </InfoSection>
-        <Amount $isNegative={isNegative}>
-          {formatCurrency(transaction.amount, transaction.currency)}
-        </Amount>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Amount $isNegative={isNegative}>
+            {formatCurrency(transaction.amount, transaction.currency)}
+          </Amount>
+          <Button 
+            type="text"
+            icon={transaction.ignored ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            onClick={handleIgnoreToggle}
+          />
+        </div>
       </TransactionCell>
 
       <Modal

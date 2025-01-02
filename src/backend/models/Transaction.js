@@ -39,6 +39,10 @@ const transactionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'RecurrentExpense'
   },
+  ignored: {
+    type: Boolean,
+    default: false
+  },
   metadata: {
     type: mongoose.Schema.Types.Mixed,
     default: {}

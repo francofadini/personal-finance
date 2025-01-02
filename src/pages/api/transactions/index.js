@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import Transaction from '@/backend/models/Transaction';
-import { updateTransactionCategoryUseCase } from '@/backend/use-cases/transaction/updateTransactionCategoryUseCase';
+import { updateTransactionUseCase } from '@/backend/use-cases/transaction/updateTransactionUseCase';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -40,7 +40,6 @@ async function handleGetTransactions(req, res, userId) {
   } = req.query;
 
   const query = { userId };
-  console.log(startDate, endDate);
   
   if (accountId) query.accountId = accountId;
   if (categoryId) query.categoryId = categoryId;
@@ -67,17 +66,18 @@ async function handleGetTransactions(req, res, userId) {
 }
 
 async function handleUpdateTransaction(req, res, userId) {
-  const { transactionId, categoryId, subcategoryId } = req.body;
+  const { transactionId, categoryId, subcategoryId, ignored } = req.body;
   
   if (!transactionId) {
     return res.status(400).json({ error: 'Transaction ID is required' });
   }
 
-  const transaction = await updateTransactionCategoryUseCase({
+  const transaction = await updateTransactionUseCase({
     transactionId,
     userId,
     categoryId,
-    subcategoryId
+    subcategoryId,
+    ignored
   });
 
   return res.status(200).json(transaction);
