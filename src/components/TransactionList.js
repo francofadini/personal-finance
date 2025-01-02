@@ -42,8 +42,13 @@ const DateHeader = styled.div`
   }
 `;
 
-const TransactionList = ({ transactions, loading }) => {
+const TransactionList = ({ transactions, loading, onTransactionUpdate }) => {
   const { token } = theme.useToken();
+  
+  const handleTransactionUpdate = (updatedTransaction) => {
+    onTransactionUpdate?.(updatedTransaction);
+  };
+
   const groupedTransactions = transactions.reduce((groups, transaction) => {
     const date = new Date(transaction.date).toLocaleDateString();
     if (!groups[date]) {
@@ -61,7 +66,11 @@ const TransactionList = ({ transactions, loading }) => {
           <DateGroup>
             <DateHeader $token={token}>{date}</DateHeader>
             {dayTransactions.map(transaction => (
-              <TransactionListItem key={transaction._id} transaction={transaction} />
+              <TransactionListItem 
+                key={transaction._id} 
+                transaction={transaction}
+                onUpdate={handleTransactionUpdate}
+              />
             ))}
           </DateGroup>
         )}

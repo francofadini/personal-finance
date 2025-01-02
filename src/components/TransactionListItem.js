@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Typography } from 'antd';
+import { Typography, Modal, message } from 'antd';
 import { formatCurrency } from '../utils/formater';
+import CategorySelector from './CategorySelector';
 
 const { Text } = Typography;
 
@@ -15,6 +16,7 @@ const TransactionCell = styled.div`
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 
   &:active {
     background: #fafafa;
@@ -68,26 +70,67 @@ const Amount = styled(Text)`
   flex-shrink: 0;
 `;
 
-const TransactionListItem = ({ transaction }) => {
+const TransactionListItem = ({ transaction, onUpdate }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const isNegative = transaction.amount < 0;
   const isDefault = transaction.categoryId?.name == transaction.subcategoryId?.name;
-  const categoryLabel = !isDefault ? `${transaction.categoryId?.name} / ${transaction.subcategoryId?.name}` : (transaction.categoryId?.name ?? 'Uncategorized');
-  
+  const categoryLabel = !isDefault ? 
+    `${transaction.categoryId?.name} / ${transaction.subcategoryId?.name}` : 
+    (transaction.categoryId?.name ?? 'Uncategorized');
+
+  const handleCategorySelect = async ({ categoryId, subcategoryId }) => {
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionId: transaction._id,
+          categoryId,
+          subcategoryId
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update category');
+      
+      const updatedTransaction = await response.json();
+      onUpdate?.(updatedTransaction);
+      setIsModalVisible(false);
+      message.success('Category updated successfully');
+    } catch (error) {
+      message.error('Failed to update category');
+    }
+  };
+
   return (
-    <TransactionCell>
-      <InfoSection>
-        <IconCircle>
-          {transaction.categoryId?.icon}
-        </IconCircle>
-        <TextSection>
-          <Title>{transaction.description}</Title>
-          <Category>{categoryLabel}</Category>
-        </TextSection>
-      </InfoSection>
-      <Amount $isNegative={isNegative}>
-        {formatCurrency(transaction.amount, transaction.currency)}
-      </Amount>
-    </TransactionCell>
+    <>
+      <TransactionCell onClick={() => setIsModalVisible(true)}>
+        <InfoSection>
+          <IconCircle>
+            {transaction.categoryId?.icon}
+          </IconCircle>
+          <TextSection>
+            <Title>{transaction.description}</Title>
+            <Category>{categoryLabel}</Category>
+          </TextSection>
+        </InfoSection>
+        <Amount $isNegative={isNegative}>
+          {formatCurrency(transaction.amount, transaction.currency)}
+        </Amount>
+      </TransactionCell>
+
+      <Modal
+        title="Select Category"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <CategorySelector
+          selectedCategoryId={transaction.categoryId?._id}
+          selectedSubcategoryId={transaction.subcategoryId?._id}
+          onSelect={handleCategorySelect}
+        />
+      </Modal>
+    </>
   );
 };
 

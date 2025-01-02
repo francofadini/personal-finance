@@ -71,6 +71,14 @@ const TransactionsPage = () => {
     transaction.description?.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleTransactionUpdate = (updatedTransaction) => {
+    setTransactions(currentTransactions => 
+      currentTransactions.map(t => 
+        t._id === updatedTransaction._id ? updatedTransaction : t
+      )
+    );
+  };
+
   return (
     <Layout>
       <MobileHeader
@@ -97,6 +105,7 @@ const TransactionsPage = () => {
       <TransactionList 
         transactions={filteredTransactions}
         loading={loading}
+        onTransactionUpdate={handleTransactionUpdate}
       />
 
       <TransactionFilters

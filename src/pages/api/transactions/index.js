@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
 import Transaction from '@/backend/models/Transaction';
+import { updateTransactionCategoryUseCase } from '@/backend/use-cases/transaction/updateTransactionCategoryUseCase';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -15,8 +16,10 @@ export default async function handler(req, res) {
     switch (req.method) {
       case 'GET':
         return handleGetTransactions(req, res, session.user.id);
+      case 'PUT':
+        return handleUpdateTransaction(req, res, session.user.id);
       default:
-        res.setHeader('Allow', ['GET']);
+        res.setHeader('Allow', ['GET', 'PUT']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
@@ -61,4 +64,21 @@ async function handleGetTransactions(req, res, userId) {
   ]);
 
   return res.status(200).json({ transactions, pagination: { page, limit, total } });
+}
+
+async function handleUpdateTransaction(req, res, userId) {
+  const { transactionId, categoryId, subcategoryId } = req.body;
+  
+  if (!transactionId) {
+    return res.status(400).json({ error: 'Transaction ID is required' });
+  }
+
+  const transaction = await updateTransactionCategoryUseCase({
+    transactionId,
+    userId,
+    categoryId,
+    subcategoryId
+  });
+
+  return res.status(200).json(transaction);
 } 
