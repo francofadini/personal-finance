@@ -13,6 +13,7 @@ export const createAccountOrchestrator = {
     console.log('🚀 Finalizing account creation:', { userId, institutionId, ref });
     
     const requisition = await finalizeRequisition(ref);
+    console.log('requisition', requisition);
     console.log('✅ Requisition finalized, accounts:', requisition.accounts);
     
     const savedAccounts = [];
@@ -23,6 +24,8 @@ export const createAccountOrchestrator = {
           userId,
           name: accountId,
           identifier: accountId,
+          institutionName: requisition.institutionName,
+          institutionLogo: requisition.institutionLogo,
           metadata: {
             provider: 'gocardless',
             accountId,

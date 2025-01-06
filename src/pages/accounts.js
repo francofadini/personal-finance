@@ -41,7 +41,6 @@ const AccountsPage = () => {
       }
       setLinkStatus('success');
       await loadAccounts();
-      router.replace('/', undefined, { shallow: true });
     } catch (error) {
       console.error('Account linking failed:', error);
       setLinkStatus('error');

@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       
       // Step 1: Initiate account creation
       if (institutionId && !ref) {
-        const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/?institutionId=${institutionId}`;
+        const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/?institutionId=${institutionId}`;
         const result = await createAccountOrchestrator.initiate(
           session.user.id, 
           institutionId,

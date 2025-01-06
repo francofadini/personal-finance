@@ -3,6 +3,7 @@ import Account from '@/backend/models/Account';
 
 export const createAccountUseCase = async (accountData) => {
   try {
+    console.log('accountData', accountData);
     await connectToDatabase();
 
     //validate accountData
@@ -16,8 +17,8 @@ export const createAccountUseCase = async (accountData) => {
       balance: accountData.balance || 0,
       currency: accountData.currency || 'EUR',
       identifier: accountData.identifier,
-      institutionName: accountData.institutionName,
-      institutionLogo: accountData.institutionLogo,
+      institutionName: accountData.institutionName || 'Sandbox Finance',
+      institutionLogo: accountData.institutionLogo || 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg',
       metadata: accountData.metadata
     });
 
