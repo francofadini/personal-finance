@@ -1,4 +1,13 @@
 {
+    "dashboard": {
+      "title": "Panel",
+      "monthlySpent": "Gasto Mensual",
+      "monthlyProgress": "Progreso Presupuesto Mensual",
+      "weeklyProgress": "Progreso Presupuesto Semanal",
+      "topCategories": "Categorías Principales",
+      "daysAhead": "{{days}} días por delante",
+      "daysBehind": "{{days}} días por detrás"
+    },
     "accounts": {
       "title": "Cuentas",
       "deleteConfirm": {

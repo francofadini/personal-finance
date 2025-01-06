@@ -49,6 +49,7 @@
       }
     },
     "nav": {
+      "home": "Home",
       "transactions": "Transactions",
       "categories": "Categories",
       "accounts": "Accounts",
@@ -61,5 +62,14 @@
       "delete": "Delete",
       "cancel": "Cancel",
       "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "monthlySpent": "Monthly Spent",
+      "monthlyProgress": "Monthly Budget Progress",
+      "weeklyProgress": "Weekly Budget Progress",
+      "topCategories": "Top Categories",
+      "daysAhead": "{{days}} days ahead",
+      "daysBehind": "{{days}} days behind"
     }
   }

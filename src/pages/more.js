@@ -2,6 +2,7 @@ import React from 'react';
 import { List } from 'antd';
 import { useRouter } from 'next/router';
 import { 
+  BankOutlined,
   CalendarOutlined, 
   LogoutOutlined 
 } from '@ant-design/icons';
@@ -28,6 +29,12 @@ const MorePage = () => {
   const { t } = useTranslation();
 
   const menuItems = [
+    {
+      key: 'accounts',
+      icon: <BankOutlined />,
+      title: t('nav.accounts'),
+      onClick: () => router.push('/accounts')
+    },
     {
       key: 'recurrent',
       icon: <CalendarOutlined />,

@@ -3,7 +3,7 @@ import { Tabs, theme } from 'antd';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { 
-  BankOutlined,
+  HomeOutlined,
   BookOutlined,
   FolderOutlined,
   MoreOutlined 
@@ -86,11 +86,11 @@ const BottomNavigation = () => {
 
   const items = [
     {
-      key: '/accounts',
+      key: '/',
       label: (
         <TabLabel>
-          <BankOutlined />
-          <div>{t('nav.accounts')}</div>
+          <HomeOutlined />
+          <div>{t('nav.home')}</div>
         </TabLabel>
       )
     },
