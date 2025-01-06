@@ -68,7 +68,7 @@ const ActionButtons = styled.div`
   margin-top: 8px;
 `;
 
-const AccountListItem = ({ account, onSync, onDelete }) => {
+const AccountListItem = ({ account, onSync, onDelete, syncing }) => {
   const token = useAntdToken();
   
   return (
@@ -87,8 +87,20 @@ const AccountListItem = ({ account, onSync, onDelete }) => {
       <BottomRow>
         <LastSync>{`Last sync: ${new Date(account.lastTransactionsSync).toLocaleString()}`}</LastSync>
         <ActionButtons>
-          <Button icon={<SyncOutlined />} onClick={onSync} type="text" />
-          <Button icon={<DeleteOutlined />} onClick={onDelete} type="text" danger />
+          <Button 
+            icon={<SyncOutlined spin={syncing} />} 
+            onClick={onSync} 
+            type="text"
+            loading={syncing}
+            disabled={syncing}
+          />
+          <Button 
+            icon={<DeleteOutlined />} 
+            onClick={onDelete} 
+            type="text" 
+            danger 
+            disabled={syncing}
+          />
         </ActionButtons>
       </BottomRow>
     </AccountCell>

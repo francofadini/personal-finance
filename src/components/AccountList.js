@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { List, Typography, Skeleton } from 'antd';
 import AccountListItem from './AccountListItem';
@@ -17,11 +17,26 @@ const EmptyText = styled(Text)`
 `;
 
 const AccountList = ({ accounts, loading, onDeleteAccount, onSyncAccount }) => {
+  const [syncingAccounts, setSyncingAccounts] = useState(new Set());
+
+  const handleSync = async (accountId) => {
+    setSyncingAccounts(prev => new Set(prev).add(accountId));
+    try {
+      await onSyncAccount(accountId);
+    } finally {
+      setSyncingAccounts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(accountId);
+        return newSet;
+      });
+    }
+  };
+
   return (
     <StyledList
       grid={{ 
         gutter: 16,
-        column: 1  // Forces 1 item per row
+        column: 1
       }}
       dataSource={accounts}
       renderItem={(account) => (
@@ -30,8 +45,9 @@ const AccountList = ({ accounts, loading, onDeleteAccount, onSyncAccount }) => {
             key={account._id}
             account={account}
             loading={loading}
+            syncing={syncingAccounts.has(account._id)}
             onDelete={() => onDeleteAccount(account._id)}
-            onSync={() => onSyncAccount(account._id)}
+            onSync={() => handleSync(account._id)}
           />
         </List.Item>
       )}

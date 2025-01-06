@@ -6,7 +6,9 @@
         "content": "Are you sure you want to delete this account?"
       },
       "deleteSuccess": "Account deleted successfully",
-      "deleteError": "Error deleting account"
+      "deleteError": "Error deleting account",
+      "syncSuccess": "Account synced successfully",
+      "syncError": "Failed to sync account"
     },
     "categories": {
       "title": "Categories",

@@ -89,10 +89,11 @@ const AccountsPage = () => {
   const handleSyncAccount = async (accountId) => {
     try {
       await syncAccount(accountId);
-      message.success('Account synced successfully');
-      loadAccounts();
+      message.success(t('accounts.syncSuccess'));
+      await loadAccounts();
     } catch (error) {
-      message.error('Error syncing account');
+      console.error('Error syncing account:', error);
+      message.error(t('accounts.syncError'));
     }
   };
 
