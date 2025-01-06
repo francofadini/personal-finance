@@ -6,7 +6,7 @@ import MobileHeader from '@/components/MobileHeader';
 import TransactionList from '@/components/TransactionList';
 import TransactionFilters from '@/components/TransactionFilters';
 import MainButton from '@/components/MainButton';
-import { FilterOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import TransactionForm from '@/components/TransactionForm';
 
 const FiltersButton = styled(MainButton)`
@@ -17,7 +17,7 @@ const TransactionsPage = () => {
   const { token } = theme.useToken();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -27,16 +27,31 @@ const TransactionsPage = () => {
     subcategory: null
   });
   const [accounts, setAccounts] = useState([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 50,
+    total: 0
+  });
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    fetchTransactions();
+    setPage(1);
+    fetchTransactions(1);
     fetchCategories();
     fetchAccounts();
   }, [filters]);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (pageNum = page) => {
+    if (loading) return;
+    
     try {
+      setLoading(true);
+      console.log('Fetching page:', pageNum);
+      
       const params = new URLSearchParams();
+      params.append('page', pageNum);
+      params.append('limit', 50);
       if (filters.dates) {
         if (filters.dates[0]) params.append('startDate', filters.dates[0].format('YYYY-MM-DD'));
         if (filters.dates[1]) params.append('endDate', filters.dates[1].format('YYYY-MM-DD'));
@@ -47,9 +62,15 @@ const TransactionsPage = () => {
       const response = await fetch(`/api/transactions?${params}`);
       if (!response.ok) throw new Error('Failed to fetch transactions');
       const data = await response.json();
-      setTransactions(data.transactions);
+      console.log('Fetched transactions:', data.transactions.length);
+      
+      setTransactions(prev => 
+        pageNum === 1 ? data.transactions : [...prev, ...data.transactions]
+      );
+      setHasMore(data.transactions.length === 50);
+      setPage(pageNum);
     } catch (error) {
-      console.error(error);
+      console.error('Fetch error:', error);
       message.error('Failed to load transactions');
     } finally {
       setLoading(false);
@@ -104,6 +125,15 @@ const TransactionsPage = () => {
     );
   };
 
+  const handlePageChange = (page) => {
+    setPagination(prev => ({ ...prev, current: page }));
+  };
+
+  const handleLoadMore = () => {
+    if (!hasMore || loading) return;
+    fetchTransactions(page + 1);
+  };
+
   return (
     <Layout>
       <MobileHeader
@@ -130,6 +160,8 @@ const TransactionsPage = () => {
       <TransactionList 
         transactions={filteredTransactions}
         loading={loading}
+        hasMore={hasMore}
+        onLoadMore={handleLoadMore}
         onTransactionUpdate={handleTransactionUpdate}
         onTransactionDelete={handleTransactionDelete}
       />

@@ -59,13 +59,21 @@ async function handleGetTransactions(req, res, userId) {
     Transaction.find(query)
       .populate('categoryId', 'name icon')
       .populate('subcategoryId', 'name')
+      .sort({ date: -1 })
       .skip(skip)
       .limit(limit)
       .exec(),
     Transaction.countDocuments(query).exec()
   ]);
 
-  return res.status(200).json({ transactions, pagination: { page, limit, total } });
+  return res.status(200).json({ 
+    transactions, 
+    pagination: { 
+      page: parseInt(page), 
+      limit: parseInt(limit), 
+      total 
+    } 
+  });
 }
 
 async function handleUpdateTransaction(req, res, userId) {
