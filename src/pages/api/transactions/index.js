@@ -55,6 +55,8 @@ async function handleGetTransactions(req, res, userId) {
 
   const skip = (page - 1) * limit;
 
+  await connectToDatabase();
+
   const [transactions, total] = await Promise.all([
     Transaction.find(query)
       .populate('categoryId', 'name icon')
