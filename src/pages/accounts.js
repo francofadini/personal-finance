@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import AccountList from '@/components/AccountList';
 import AddAccountButton from '@/components/AddAccountButton';
-import { Spin, Result, message, Button } from 'antd';
+import { Spin, Result, message, Button, Modal } from 'antd';
 import { fetchAccounts, createAccount, deleteAccount, syncAccount, finalizeAccount } from '@/services/accountService';
 import { useTranslation } from 'react-i18next';
 import MobileHeader from '@/components/MobileHeader';
