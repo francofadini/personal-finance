@@ -1,6 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { connectToDatabase } from '@/lib/mongoose';
+import { Category } from '@/backend/models/Category';
+import { Subcategory } from '@/backend/models/Subcategory';
 import Transaction from '@/backend/models/Transaction';
 import { updateTransactionUseCase } from '@/backend/use-cases/transaction/updateTransactionUseCase';
 import { createTransactionUseCase } from '@/backend/use-cases/transaction/createTransactionUseCase';
@@ -54,8 +56,6 @@ async function handleGetTransactions(req, res, userId) {
   if (endDate) query.date.$lte = new Date(endDate);
 
   const skip = (page - 1) * limit;
-
-  await connectToDatabase();
 
   const [transactions, total] = await Promise.all([
     Transaction.find(query)
