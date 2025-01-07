@@ -258,7 +258,12 @@ export const syncTransactions = async (account) => {
           currency: gcTransaction.transactionAmount.currency,
           description: gcTransaction.creditorName || gcTransaction.remittanceInformationUnstructured?.trim() || 'No description',
           note: gcTransaction.remittanceInformationUnstructured?.trim() || 'No description',
-          date: new Date(gcTransaction.bookingDateTime || gcTransaction.valueDateTime),
+          date: new Date(
+            gcTransaction.bookingDateTime || 
+            gcTransaction.valueDateTime || 
+            gcTransaction.bookingDate || 
+            gcTransaction.valueDate
+          ),
           metadata: {
             gocardless: {
               transactionId: gcTransaction.transactionId,
