@@ -69,6 +69,26 @@ export const fetchInstitutions = async (countryCode) => {
   }
 };
 
+export const getInstitution = async (institutionId) => {
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        name: 'Sandbox Finance',
+        logo: 'https://sandboxfinance.gocardless.io/static/assets/img/sandbox_finance.svg'
+      }
+    }
+    const response = await fetch(`${API_URL}/institutions/${institutionId}`, { 
+      headers: await getHeaders() 
+    });
+    if (!response.ok) throw new Error(`Failed to fetch institution: ${response.status}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('❌ Failed to get institution:', error.message);
+    throw new Error('Could not retrieve institution');
+  }
+};
+
 export const createRequisition = async (institutionId, redirectUrl) => {
   try {
     const response = await fetch(`${API_URL}/requisitions/`, {

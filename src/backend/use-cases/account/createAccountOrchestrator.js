@@ -1,4 +1,4 @@
-import { createRequisition, finalizeRequisition, fetchAccountAndDetails } from '@/backend/services/gocardlessService';
+import { createRequisition, finalizeRequisition, fetchAccountAndDetails, getInstitution } from '@/backend/services/gocardlessService';
 import { createAccountUseCase } from './createAccountUseCase';
 
 export const createAccountOrchestrator = {
@@ -15,7 +15,9 @@ export const createAccountOrchestrator = {
     const requisition = await finalizeRequisition(ref);
     console.log('requisition', requisition);
     console.log('✅ Requisition finalized, accounts:', requisition.accounts);
-    
+
+    const institution = await getInstitution(institutionId);
+
     const savedAccounts = [];
     for (const accountId of requisition.accounts) {
       try {
@@ -24,8 +26,8 @@ export const createAccountOrchestrator = {
           userId,
           name: accountId,
           identifier: accountId,
-          institutionName: requisition.institutionName,
-          institutionLogo: requisition.institutionLogo,
+          institutionName: institution.name,
+          institutionLogo: institution.logo,
           metadata: {
             provider: 'gocardless',
             accountId,
